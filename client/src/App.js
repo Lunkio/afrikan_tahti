@@ -49,8 +49,8 @@ const App = ({ updater }) => {
                 await dispatch(initSeaRoutes());
                 dispatch(initUser());
                 // for dev use these two lines down
-                // const allPlayersFromDB = await playersService.getAllPlayers();
-                // dispatch(initPlayers(allPlayersFromDB));
+                const allPlayersFromDB = await playersService.getAllPlayers();
+                dispatch(initPlayers(allPlayersFromDB));
             } catch (e) {
                 console.log('error', e);
                 dispatch(setAlert('All info was not retrieved from DB'));
