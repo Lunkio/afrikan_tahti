@@ -1,7 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 saannot.txt
-data_backup_for_server.json
+data_backup_newmap.json
+data_backup_newmap_old.json
 # dependencies
 /node_modules
 /.pnp

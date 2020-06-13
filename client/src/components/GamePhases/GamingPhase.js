@@ -18,7 +18,7 @@ const GamingPhase = () => {
     const [confirmEndTurn, setConfirmEndTurn] = useState(false);
     const [stepsRemainInCaseBoatTicketCancel, setStepsRemainInCaseBoatTicketCancel] = useState(0);
     // const [amountOfPlayers, setAmountOfPlayers] = useState(players.length);
-    console.log('playersamount', players.length);
+    //console.log('playersamount', players.length);
 
     // asettaa pelaajille (player.turn) arvoksi 0,1,2 jne... Vain kerran
     useEffect(() => {

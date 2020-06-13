@@ -47,13 +47,25 @@ export const flyPawn = async (spot, player) => {
 
 const Pawn = () => {
     const players = useSelector(state => state.players);
+
+    const fitNewMap = {
+        margin: 0,
+        position: 'absolute',
+        left: '50%',
+        transform: 'translateX(-50%)'
+    };
     
     const pawnLocation = (player) => {
         return {
             position: 'absolute',
             top: `${player.coordY-27}px`,
-            left: `${player.coordX-7}px`
+            left: `${player.coordX-483}px`
         };
+        // return {
+        //     position: 'absolute',
+        //     top: `${player.coordY-27}px`,
+        //     left: `${player.coordX-7}px`
+        // };
     };
 
     const pawnColor = (player) => {
@@ -65,9 +77,11 @@ const Pawn = () => {
     return (
         <React.Fragment>
             {players.map(player =>
-                <span key={player.id} style={pawnLocation(player)}>
-                    <PawnStyle style={pawnColor(player)} />
-                </span>
+                <div style={fitNewMap} key={player.id}>
+                    <span style={pawnLocation(player)}>
+                        <PawnStyle style={pawnColor(player)} />
+                    </span>
+                </div>
             )}
         </React.Fragment>
     );

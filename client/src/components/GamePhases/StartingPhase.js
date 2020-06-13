@@ -10,9 +10,13 @@ const StartingPhase = () => {
     const players = useSelector(state => state.players);
     const user = useSelector(state => state.user);
 
+    const player = players.find(p => p.uuid === user.uuid);
+    if (!player) {
+        return null;
+    }
+
     const playerStartReady = async () => {
         try {
-            const player = players.find(p => p.uuid === user.uuid);
             if (player.stepControl === 0) {
                 dispatch(setAlert('Valitse aloituspaikka'));
                 return;
@@ -27,12 +31,10 @@ const StartingPhase = () => {
     };
 
     const startInfoText = () => {
-        const player = players.find(p => p.uuid === user.uuid);
         return player.startReady ? 'Odota muita pelaajia...' : 'Valitse aloituspaikka';
     };
 
     const buttonCheckIfReady = () => {
-        const player = players.find(p => p.uuid === user.uuid);
         if (player) {
             return player.startReady;
         } else {

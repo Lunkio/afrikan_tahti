@@ -13,6 +13,7 @@ const LandingSpot = () => {
     const user = useSelector(state => state.user);
     const landingSpots = useSelector(state => state.landingSpots);
     const landingTokens = useSelector(state => state.landingTokens);
+    //console.log('landingtokens', landingTokens);
 
     const checkIfFirstInCapeTown = async (player) => {
         try {
@@ -67,7 +68,7 @@ const LandingSpot = () => {
     };
 
     const treasureHider = (spot) => {
-        return !spot.revealed ? 'pahvi pahvi-peittaa-false' : 'pahvi pahvi-peittaa-true';
+        return spot.revealed ? 'pahvi pahvi-peittaa-false' : 'pahvi pahvi-peittaa-true';
     };
 
     return (
@@ -81,11 +82,12 @@ const LandingSpot = () => {
                         className='landing-spot-focus-removal'
                         onClick={() => movePlayer(spot)}
                     >
+                        {/* <p>{spot.id}</p> */}
                     </LandingSpotStyle>
                 )}
             </div>
             }
-            {landingTokens.length > 0 &&
+            {landingTokens.length === 30 && landingSpots.length > 0 &&
             <div>
                 {landingSpots.map((spot) =>
                     <LandingSpotStyle 

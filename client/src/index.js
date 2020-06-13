@@ -8,14 +8,14 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import theme from './theme';
 import io from 'socket.io-client';
 
-// tällä voit klikkailemalla lisätä kuvia/spotteja pelikentälle
+// tällä voit klikkailemalla lisätä kuvia/spotteja pelikentälle, laita vain json-server päälle ja vaihda mapSpotsServicen funktio oikeaan spottiin
 // import mapSpotsService from './services/mapSpotsService';
 // let canvas = document.getElementById('root');
 // let updater = 0;
 // const onMouseClick = async (event) => {
 //     const newSpot = {
-//         coordX: event.pageX,
-//         coordY: event.pageY
+//         coordX: event.clientX -538,
+//         coordY: event.clientY
 //     };
 //     try {
 //         await mapSpotsService.createStartPoint(newSpot);

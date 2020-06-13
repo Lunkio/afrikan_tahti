@@ -49,8 +49,8 @@ const App = ({ updater }) => {
                 await dispatch(initSeaRoutes());
                 dispatch(initUser());
                 // for dev use these two lines down
-                const allPlayersFromDB = await playersService.getAllPlayers();
-                dispatch(initPlayers(allPlayersFromDB));
+                // const allPlayersFromDB = await playersService.getAllPlayers();
+                // dispatch(initPlayers(allPlayersFromDB));
             } catch (e) {
                 console.log('error', e);
                 dispatch(setAlert('All info was not retrieved from DB'));
@@ -155,28 +155,40 @@ const App = ({ updater }) => {
             {!user && <LoginPage />}
             {user && !playersLobbyReady && !gameOver && <Lobby />}
             {user && playersLobbyReady &&
-                <PlayArena>
-                    <div>
-                        <Kartta />
-                        <LandingSpot />
-                        <LandRoute />
-                        <SeaRoute />
-                        <StartingPoint />
-                    </div>
-                    <PlayerSection>
-                        {!playersGameReady && <StartingPhase />}
-                        {playersGameReady && <GamingPhase />}
-                        <PlayerView />
-                        <OtherPlayers />
-                    </PlayerSection>
-                    <Pawn />
-                </PlayArena>
+            <div>
+                <Centered>
+                    <PlayArena>
+                        <div>
+                            <Kartta />
+                            <LandingSpot />
+                            <LandRoute />
+                            <SeaRoute />
+                            <StartingPoint />
+                        </div>
+                        <PlayerSection>
+                            {!playersGameReady && <StartingPhase />}
+                            {playersGameReady && <GamingPhase />}
+                            <PlayerView />
+                            <OtherPlayers />
+                        </PlayerSection>
+                    </PlayArena>
+                </Centered>
+                <Pawn />
+            </div>
             }
             {gameOver && <GameOver gameOver={gameOver} setGameOver={setGameOver} setPlayersLobbyReady={setPlayersLobbyReady} setPlayersGameReady={setPlayersGameReady} />}
             <AlertMessage />
         </div>
     );
 };
+
+const Centered = styled.div`
+    margin: 0;
+    position: absolute;
+    left: 50%;
+    -ms-transform: translateX(-50%);
+    transform: translateX(-50%);
+`;
 
 const PlayArena = styled.div`
     display: flex;
