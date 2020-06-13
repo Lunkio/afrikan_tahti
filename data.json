@@ -1,0 +1,1652 @@
+{
+  "landRoutes": [
+    {
+      "coordX": 153,
+      "coordY": 180,
+      "stepControl": 11,
+      "canStep": [502,1001,1002,1003,1004,1005,1006],
+      "id": 1
+    },
+    {
+      "coordX": 168,
+      "coordY": 192,
+      "stepControl": 12,
+      "id": 2
+    },
+    {
+      "coordX": 187,
+      "coordY": 208,
+      "stepControl": 13,
+      "id": 3
+    },
+    {
+      "coordX": 200,
+      "coordY": 232,
+      "stepControl": 14,
+      "canStep": [510],
+      "id": 4
+    },
+    {
+      "coordX": 176,
+      "coordY": 171,
+      "stepControl": 21,
+      "canStep": [1001,1002,1003,1004,1005,1006],
+      "id": 5
+    },
+    {
+      "coordX": 198,
+      "coordY": 183,
+      "stepControl": 22,
+      "canStep": [1001,1002,1003,1004,1005,1006],
+      "id": 6
+    },
+    {
+      "coordX": 228,
+      "coordY": 184,
+      "stepControl": 23,
+      "id": 7
+    },
+    {
+      "coordX": 253,
+      "coordY": 168,
+      "stepControl": 24,
+      "canStep": [503],
+      "id": 8
+    },
+    {
+      "coordX": 281,
+      "coordY": 185,
+      "stepControl": 31,
+      "canStep": [503],
+      "id": 9
+    },
+    {
+      "coordX": 290,
+      "coordY": 203,
+      "stepControl": 32,
+      "canStep": [504],
+      "id": 10
+    },
+    {
+      "coordX": 414,
+      "coordY": 267,
+      "stepControl": 41,
+      "canStep": [512],
+      "id": 11
+    },
+    {
+      "coordX": 390,
+      "coordY": 257,
+      "stepControl": 42,
+      "id": 12
+    },
+    {
+      "coordX": 365,
+      "coordY": 261,
+      "stepControl": 43,
+      "id": 13
+    },
+    {
+      "coordX": 340,
+      "coordY": 260,
+      "stepControl": 44,
+      "id": 14
+    },
+    {
+      "coordX": 319,
+      "coordY": 243,
+      "stepControl": 45,
+      "canStep": [504],
+      "id": 15
+    },
+    {
+      "coordX": 441,
+      "coordY": 262,
+      "stepControl": 51,
+      "canStep": [512],
+      "id": 16
+    },
+    {
+      "coordX": 446,
+      "coordY": 243,
+      "stepControl": 52,
+      "id": 17
+    },
+    {
+      "coordX": 460,
+      "coordY": 229,
+      "stepControl": 53,
+      "canStep": [1007,1008,1009,1010,1011,1012],
+      "id": 18
+    },
+    {
+      "coordX": 83,
+      "coordY": 384,
+      "stepControl": 61,
+      "canStep": [506],
+      "id": 19
+    },
+    {
+      "coordX": 83,
+      "coordY": 359,
+      "stepControl": 62,
+      "id": 20
+    },
+    {
+      "coordX": 59,
+      "coordY": 344,
+      "stepControl": 63,
+      "canStep": [505],
+      "id": 21
+    },
+    {
+      "coordX": 48,
+      "coordY": 309,
+      "stepControl": 71,
+      "canStep": [505],
+      "id": 22
+    },
+    {
+      "coordX": 68,
+      "coordY": 298,
+      "stepControl": 72,
+      "id": 23
+    },
+    {
+      "coordX": 95,
+      "coordY": 303,
+      "stepControl": 73,
+      "id": 24
+    },
+    {
+      "coordX": 114,
+      "coordY": 288,
+      "stepControl": 74,
+      "id": 25
+    },
+    {
+      "coordX": 134,
+      "coordY": 267,
+      "stepControl": 75,
+      "id": 26
+    },
+    {
+      "coordX": 153,
+      "coordY": 246,
+      "stepControl": 76,
+      "id": 27
+    },
+    {
+      "coordX": 154,
+      "coordY": 218,
+      "stepControl": 77,
+      "canStep": [502],
+      "id": 28
+    },
+    {
+      "coordX": 138,
+      "coordY": 403,
+      "stepControl": 89,
+      "canStep": [507,3030],
+      "id": 29
+    },
+    {
+      "coordX": 135,
+      "coordY": 379,
+      "stepControl": 3030,
+      "canStep": [89,81,83],
+      "id": 30
+    },
+    {
+      "coordX": 155,
+      "coordY": 362,
+      "stepControl": 81,
+      "canStep": [508, 3030],
+      "id": 31
+    },
+    {
+      "coordX": 114,
+      "coordY": 388,
+      "stepControl": 83,
+      "canStep": [3030],
+      "id": 32
+    },
+    {
+      "coordX": 92,
+      "coordY": 403,
+      "stepControl": 84,
+      "canStep": [506],
+      "id": 33
+    },
+    {
+      "coordX": 226,
+      "coordY": 411,
+      "stepControl": 91,
+      "canStep": [509],
+      "id": 34
+    },
+    {
+      "coordX": 227,
+      "coordY": 388,
+      "stepControl": 92,
+      "id": 35
+    },
+    {
+      "coordX": 216,
+      "coordY": 367,
+      "stepControl": 93,
+      "id": 36
+    },
+    {
+      "coordX": 199,
+      "coordY": 348,
+      "stepControl": 94,
+      "canStep": [508],
+      "id": 37
+    },
+    {
+      "coordX": 262,
+      "coordY": 428,
+      "stepControl": 111,
+      "canStep": [509],
+      "id": 38
+    },
+    {
+      "coordX": 288,
+      "coordY": 429,
+      "stepControl": 112,
+      "canStep": [4040],
+      "id": 39
+    },
+    {
+      "coordX": 311,
+      "coordY": 426,
+      "stepControl": 4040,
+      "canStep": [112,121,141,251],
+      "id": 40
+    },
+    {
+      "coordX": 304,
+      "coordY": 406,
+      "stepControl": 121,
+      "canStep": [4040],
+      "id": 41
+    },
+    {
+      "coordX": 300,
+      "coordY": 385,
+      "stepControl": 122,
+      "id": 42
+    },
+    {
+      "coordX": 303,
+      "coordY": 364,
+      "stepControl": 123,
+      "canStep": [514],
+      "id": 43
+    },
+    {
+      "coordX": 345,
+      "coordY": 351,
+      "stepControl": 131,
+      "canStep": [514],
+      "id": 44
+    },
+    {
+      "coordX": 359,
+      "coordY": 367,
+      "stepControl": 132,
+      "id": 45
+    },
+    {
+      "coordX": 374,
+      "coordY": 379,
+      "stepControl": 133,
+      "canStep": [515],
+      "id": 46
+    },
+    {
+      "coordX": 332,
+      "coordY": 415,
+      "stepControl": 141,
+      "canStep": [4040],
+      "id": 47
+    },
+    {
+      "coordX": 352,
+      "coordY": 406,
+      "stepControl": 142,
+      "id": 48
+    },
+    {
+      "coordX": 375,
+      "coordY": 402,
+      "stepControl": 143,
+      "canStep": [515],
+      "id": 49
+    },
+    {
+      "coordX": 425,
+      "coordY": 349,
+      "stepControl": 151,
+      "canStep": [515],
+      "id": 50
+    },
+    {
+      "coordX": 437,
+      "coordY": 328,
+      "stepControl": 152,
+      "canStep": [512],
+      "id": 51
+    },
+    {
+      "coordX": 272,
+      "coordY": 264,
+      "stepControl": 161,
+      "canStep": [510],
+      "id": 52
+    },
+    {
+      "coordX": 301,
+      "coordY": 271,
+      "stepControl": 162,
+      "id": 53
+    },
+    {
+      "coordX": 324,
+      "coordY": 287,
+      "stepControl": 163,
+      "id": 54
+    },
+    {
+      "coordX": 339,
+      "coordY": 301,
+      "stepControl": 164,
+      "id": 55
+    },
+    {
+      "coordX": 357,
+      "coordY": 316,
+      "stepControl": 165,
+      "id": 56
+    },
+    {
+      "coordX": 374,
+      "coordY": 334,
+      "stepControl": 166,
+      "id": 57
+    },
+    {
+      "coordX": 383,
+      "coordY": 358,
+      "stepControl": 167,
+      "canStep": [515],
+      "id": 58
+    },
+    {
+      "coordX": 446,
+      "coordY": 381,
+      "stepControl": 171,
+      "canStep": [515],
+      "id": 59
+    },
+    {
+      "coordX": 473,
+      "coordY": 376,
+      "stepControl": 172,
+      "id": 60
+    },
+    {
+      "coordX": 499,
+      "coordY": 362,
+      "stepControl": 173,
+      "canStep": [511],
+      "id": 61
+    },
+    {
+      "coordX": 530,
+      "coordY": 368,
+      "stepControl": 181,
+      "canStep": [511],
+      "id": 62
+    },
+    {
+      "coordX": 538,
+      "coordY": 391,
+      "stepControl": 182,
+      "canStep": [517],
+      "id": 63
+    },
+    {
+      "coordX": 587,
+      "coordY": 427,
+      "stepControl": 191,
+      "canStep": [517],
+      "id": 64
+    },
+    {
+      "coordX": 613,
+      "coordY": 427,
+      "stepControl": 192,
+      "canStep": [516],
+      "id": 65
+    },
+    {
+      "coordX": 434,
+      "coordY": 405,
+      "stepControl": 201,
+      "canStep": [515,518],
+      "id": 66
+    },
+    {
+      "coordX": 460,
+      "coordY": 473,
+      "stepControl": 211,
+      "canStep": [518,519],
+      "id": 67
+    },
+    {
+      "coordX": 516,
+      "coordY": 468,
+      "stepControl": 221,
+      "canStep": [519],
+      "id": 68
+    },
+    {
+      "coordX": 536,
+      "coordY": 458,
+      "stepControl": 222,
+      "canStep": [517],
+      "id": 69
+    },
+    {
+      "coordX": 626,
+      "coordY": 446,
+      "stepControl": 231,
+      "canStep": [516],
+      "id": 70
+    },
+    {
+      "coordX": 605,
+      "coordY": 466,
+      "stepControl": 232,
+      "id": 71
+    },
+    {
+      "coordX": 580,
+      "coordY": 482,
+      "stepControl": 233,
+      "id": 72
+    },
+    {
+      "coordX": 559,
+      "coordY": 501,
+      "stepControl": 234,
+      "id": 73
+    },
+    {
+      "coordX": 547,
+      "coordY": 524,
+      "stepControl": 235,
+      "canStep": [522],
+      "id": 74
+    },
+    {
+      "coordX": 522,
+      "coordY": 599,
+      "stepControl": 242,
+      "canStep": [522],
+      "id": 75
+    },
+    {
+      "coordX": 534,
+      "coordY": 617,
+      "stepControl": 241,
+      "canStep": [523],
+      "id": 76
+    },
+    {
+      "coordX": 501,
+      "coordY": 583,
+      "stepControl": 243,
+      "id": 77
+    },
+    {
+      "coordX": 504,
+      "coordY": 554,
+      "stepControl": 244,
+      "id": 78
+    },
+    {
+      "coordX": 511,
+      "coordY": 527,
+      "stepControl": 245,
+      "canStep": [519],
+      "id": 79
+    },
+    {
+      "coordX": 306,
+      "coordY": 453,
+      "stepControl": 251,
+      "canStep": [513,4040],
+      "id": 80
+    },
+    {
+      "coordX": 303,
+      "coordY": 533,
+      "stepControl": 261,
+      "canStep": [513],
+      "id": 81
+    },
+    {
+      "coordX": 305,
+      "coordY": 559,
+      "stepControl": 262,
+      "canStep": [520],
+      "id": 82
+    },
+    {
+      "coordX": 321,
+      "coordY": 607,
+      "stepControl": 271,
+      "canStep": [520],
+      "id": 83
+    },
+    {
+      "coordX": 344,
+      "coordY": 601,
+      "stepControl": 272,
+      "id": 84
+    },
+    {
+      "coordX": 363,
+      "coordY": 583,
+      "stepControl": 273,
+      "canStep": [521],
+      "id": 85
+    },
+    {
+      "coordX": 430,
+      "coordY": 547,
+      "stepControl": 281,
+      "canStep": [521],
+      "id": 86
+    },
+    {
+      "coordX": 440,
+      "coordY": 523,
+      "stepControl": 282,
+      "id": 87
+    },
+    {
+      "coordX": 458,
+      "coordY": 505,
+      "stepControl": 283,
+      "canStep": [519],
+      "id": 88
+    },
+    {
+      "coordX": 466,
+      "coordY": 718,
+      "stepControl": 322,
+      "canStep": [527],
+      "id": 89
+    },
+    {
+      "coordX": 475,
+      "coordY": 697,
+      "stepControl": 321,
+      "canStep": [300,372],
+      "id": 90
+    },
+    {
+      "coordX": 488,
+      "coordY": 682,
+      "stepControl": 300,
+      "canStep": [311,321],
+      "id": 91
+    },
+    {
+      "coordX": 503,
+      "coordY": 662,
+      "stepControl": 311,
+      "canStep": [300,523],
+      "id": 92
+    },
+    {
+      "coordX": 462,
+      "coordY": 670,
+      "stepControl": 299,
+      "id": 93
+    },
+    {
+      "coordX": 439,
+      "coordY": 656,
+      "stepControl": 298,
+      "id": 94
+    },
+    {
+      "coordX": 416,
+      "coordY": 641,
+      "stepControl": 297,
+      "id": 95
+    },
+    {
+      "coordX": 389,
+      "coordY": 632,
+      "stepControl": 296,
+      "id": 96
+    },
+    {
+      "coordX": 308,
+      "coordY": 623,
+      "stepControl": 293,
+      "canStep": [520],
+      "id": 97
+    },
+    {
+      "coordX": 335,
+      "coordY": 631,
+      "stepControl": 294,
+      "id": 98
+    },
+    {
+      "coordX": 361,
+      "coordY": 631,
+      "stepControl": 295,
+      "id": 99
+    },
+    {
+      "coordX": 413,
+      "coordY": 758,
+      "stepControl": 331,
+      "canStep": [527],
+      "id": 100
+    },
+    {
+      "coordX": 415,
+      "coordY": 728,
+      "stepControl": 332,
+      "canStep": [528],
+      "id": 101
+    },
+    {
+      "coordX": 324,
+      "coordY": 702,
+      "stepControl": 341,
+      "canStep": [525],
+      "id": 102
+    },
+    {
+      "coordX": 350,
+      "coordY": 696,
+      "stepControl": 342,
+      "id": 103
+    },
+    {
+      "coordX": 375,
+      "coordY": 699,
+      "stepControl": 343,
+      "canStep": [528],
+      "id": 104
+    },
+    {
+      "coordX": 327,
+      "coordY": 745,
+      "stepControl": 351,
+      "canStep": [525],
+      "id": 105
+    },
+    {
+      "coordX": 333,
+      "coordY": 769,
+      "stepControl": 352,
+      "id": 106
+    },
+    {
+      "coordX": 324,
+      "coordY": 794,
+      "stepControl": 353,
+      "canStep": [526],
+      "id": 107
+    },
+    {
+      "coordX": 589,
+      "coordY": 741,
+      "stepControl": 361,
+      "canStep": [530],
+      "id": 108
+    },
+    {
+      "coordX": 593,
+      "coordY": 719,
+      "stepControl": 362,
+      "id": 109
+    },
+    {
+      "coordX": 591,
+      "coordY": 695,
+      "stepControl": 363,
+      "canStep": [529],
+      "id": 110
+    },
+    {
+      "coordX": 451,
+      "coordY": 684,
+      "stepControl": 372,
+      "canStep": [321,528],
+      "id": 111
+    }
+  ],
+  "seaRoutes": [
+    {
+      "coordX": 81,
+      "coordY": 157,
+      "stepControl": 611,
+      "canStep": [501],
+      "id": 1
+    },
+    {
+      "coordX": 106,
+      "coordY": 149,
+      "stepControl": 612,
+      "canStep": [1001,1002,1003,1004,1005,1006],
+      "id": 2
+    },
+    {
+      "coordX": 18,
+      "coordY": 207,
+      "stepControl": 621,
+      "canStep": [501],
+      "id": 3
+    },
+    {
+      "coordX": 9,
+      "coordY": 236,
+      "stepControl": 622,
+      "id": 4
+    },
+    {
+      "coordX": 6,
+      "coordY": 268,
+      "stepControl": 623,
+      "id": 5
+    },
+    {
+      "coordX": 9,
+      "coordY": 295,
+      "stepControl": 624,
+      "canStep": [505],
+      "id": 6
+    },
+    {
+      "coordX": 249,
+      "coordY": 133,
+      "stepControl": 631,
+      "canStep": [503],
+      "id": 7
+    },
+    {
+      "coordX": 220,
+      "coordY": 132,
+      "stepControl": 632,
+      "canStep": [1001,1002,1003,1004,1005,1006],
+      "id": 8
+    },
+    {
+      "coordX": 325,
+      "coordY": 155,
+      "stepControl": 641,
+      "canStep": [503],
+      "id": 9
+    },
+    {
+      "coordX": 348,
+      "coordY": 160,
+      "stepControl": 642,
+      "canStep": [504],
+      "id": 10
+    },
+    {
+      "coordX": 373,
+      "coordY": 164,
+      "stepControl": 643,
+      "id": 11
+    },
+    {
+      "coordX": 398,
+      "coordY": 176,
+      "stepControl": 644,
+      "canStep": [1007,1008,1009,1010,1011,1012],
+      "id": 12
+    },
+    {
+      "coordX": 525,
+      "coordY": 286,
+      "stepControl": 651,
+      "canStep": [511],
+      "id": 13
+    },
+    {
+      "coordX": 511,
+      "coordY": 258,
+      "stepControl": 652,
+      "id": 14
+    },
+    {
+      "coordX": 492,
+      "coordY": 235,
+      "stepControl": 653,
+      "canStep": [1007,1008,1009,1010,1011,1012],
+      "id": 15
+    },
+    {
+      "coordX": 561,
+      "coordY": 341,
+      "stepControl": 661,
+      "canStep": [511],
+      "id": 16
+    },
+    {
+      "coordX": 577,
+      "coordY": 367,
+      "stepControl": 662,
+      "id": 17
+    },
+    {
+      "coordX": 592,
+      "coordY": 388,
+      "stepControl": 663,
+      "id": 18
+    },
+    {
+      "coordX": 616,
+      "coordY": 396,
+      "stepControl": 664,
+      "canStep": [516],
+      "id": 19
+    },
+    {
+      "coordX": 8,
+      "coordY": 373,
+      "stepControl": 667,
+      "canStep": [505],
+      "id": 20
+    },
+    {
+      "coordX": 21,
+      "coordY": 388,
+      "stepControl": 666,
+      "canStep": [506],
+      "id": 21
+    },
+    {
+      "coordX": 55,
+      "coordY": 442,
+      "stepControl": 681,
+      "canStep": [506],
+      "id": 22
+    },
+    {
+      "coordX": 74,
+      "coordY": 465,
+      "stepControl": 682,
+      "id": 23
+    },
+    {
+      "coordX": 97,
+      "coordY": 473,
+      "stepControl": 683,
+      "id": 24
+    },
+    {
+      "coordX": 124,
+      "coordY": 470,
+      "stepControl": 684,
+      "canStep": [507],
+      "id": 25
+    },
+    {
+      "coordX": 227,
+      "coordY": 487,
+      "stepControl": 693,
+      "canStep": [509],
+      "id": 26
+    },
+    {
+      "coordX": 204,
+      "coordY": 490,
+      "stepControl": 692,
+      "id": 27
+    },
+    {
+      "coordX": 171,
+      "coordY": 475,
+      "stepControl": 691,
+      "canStep": [507],
+      "id": 28
+    },
+    {
+      "coordX": 253,
+      "coordY": 568,
+      "stepControl": 696,
+      "canStep": [520],
+      "id": 29
+    },
+    {
+      "coordX": 239,
+      "coordY": 543,
+      "stepControl": 695,
+      "id": 30
+    },
+    {
+      "coordX": 229,
+      "coordY": 514,
+      "stepControl": 694,
+      "id": 31
+    },
+    {
+      "coordX": 258,
+      "coordY": 620,
+      "stepControl": 701,
+      "canStep": [520],
+      "id": 32
+    },
+    {
+      "coordX": 247,
+      "coordY": 649,
+      "stepControl": 702,
+      "id": 33
+    },
+    {
+      "coordX": 248,
+      "coordY": 672,
+      "stepControl": 703,
+      "id": 34
+    },
+    {
+      "coordX": 257,
+      "coordY": 701,
+      "stepControl": 704,
+      "canStep": [525],
+      "id": 35
+    },
+    {
+      "coordX": 275,
+      "coordY": 811,
+      "stepControl": 7070,
+      "canStep": [712,721,833],
+      "id": 36
+    },
+    {
+      "coordX": 295,
+      "coordY": 830,
+      "stepControl": 712,
+      "canStep": [526,7070],
+      "id": 37
+    },
+    {
+      "coordX": 266,
+      "coordY": 787,
+      "stepControl": 721,
+      "canStep": [7070],
+      "id": 38
+    },
+    {
+      "coordX": 269,
+      "coordY": 757,
+      "stepControl": 722,
+      "canStep": [525],
+      "id": 39
+    },
+    {
+      "coordX": 538,
+      "coordY": 734,
+      "stepControl": 731,
+      "canStep": [530],
+      "id": 40
+    },
+    {
+      "coordX": 540,
+      "coordY": 699,
+      "stepControl": 732,
+      "canStep": [523],
+      "id": 41
+    },
+    {
+      "coordX": 652,
+      "coordY": 459,
+      "stepControl": 741,
+      "canStep": [516],
+      "id": 42
+    },
+    {
+      "coordX": 648,
+      "coordY": 490,
+      "stepControl": 742,
+      "id": 43
+    },
+    {
+      "coordX": 638,
+      "coordY": 520,
+      "stepControl": 743,
+      "id": 44
+    },
+    {
+      "coordX": 628,
+      "coordY": 545,
+      "stepControl": 744,
+      "id": 45
+    },
+    {
+      "coordX": 612,
+      "coordY": 572,
+      "stepControl": 745,
+      "id": 46
+    },
+    {
+      "coordX": 596,
+      "coordY": 598,
+      "stepControl": 746,
+      "id": 47
+    },
+    {
+      "coordX": 576,
+      "coordY": 622,
+      "stepControl": 747,
+      "canStep": [523],
+      "id": 48
+    },
+    {
+      "coordX": 653,
+      "coordY": 649,
+      "stepControl": 751,
+      "canStep": [529],
+      "id": 49
+    },
+    {
+      "coordX": 661,
+      "coordY": 613,
+      "stepControl": 752,
+      "id": 50
+    },
+    {
+      "coordX": 665,
+      "coordY": 580,
+      "stepControl": 753,
+      "id": 51
+    },
+    {
+      "coordX": 667,
+      "coordY": 547,
+      "stepControl": 754,
+      "id": 52
+    },
+    {
+      "coordX": 669,
+      "coordY": 517,
+      "stepControl": 755,
+      "id": 53
+    },
+    {
+      "coordX": 669,
+      "coordY": 486,
+      "stepControl": 756,
+      "id": 54
+    },
+    {
+      "coordX": 667,
+      "coordY": 454,
+      "stepControl": 757,
+      "canStep": [516],
+      "id": 55
+    },
+    {
+      "coordX": 373,
+      "coordY": 853,
+      "stepControl": 761,
+      "canStep": [526],
+      "id": 56
+    },
+    {
+      "coordX": 402,
+      "coordY": 855,
+      "stepControl": 762,
+      "id": 57
+    },
+    {
+      "coordX": 429,
+      "coordY": 853,
+      "stepControl": 763,
+      "id": 58
+    },
+    {
+      "coordX": 456,
+      "coordY": 849,
+      "stepControl": 764,
+      "id": 59
+    },
+    {
+      "coordX": 483,
+      "coordY": 835,
+      "stepControl": 765,
+      "id": 60
+    },
+    {
+      "coordX": 510,
+      "coordY": 820,
+      "stepControl": 766,
+      "id": 61
+    },
+    {
+      "coordX": 534,
+      "coordY": 802,
+      "stepControl": 767,
+      "canStep": [530],
+      "id": 62
+    },
+    {
+      "coordX": 7,
+      "coordY": 397,
+      "stepControl": 668,
+      "id": 63
+    },
+    {
+      "coordX": 9,
+      "coordY": 424,
+      "stepControl": 669,
+      "id": 64
+    },
+    {
+      "coordX": 14,
+      "coordY": 452,
+      "stepControl": 670,
+      "id": 65
+    },
+    {
+      "coordX": 19,
+      "coordY": 483,
+      "stepControl": 671,
+      "id": 66
+    },
+    {
+      "coordX": 30,
+      "coordY": 513,
+      "stepControl": 672,
+      "id": 67
+    },
+    {
+      "coordX": 42,
+      "coordY": 541,
+      "stepControl": 673,
+      "id": 68
+    },
+    {
+      "coordX": 55,
+      "coordY": 566,
+      "stepControl": 674,
+      "id": 69
+    },
+    {
+      "coordX": 74,
+      "coordY": 597,
+      "stepControl": 675,
+      "canStep": [524],
+      "id": 70
+    },
+    {
+      "coordX": 242,
+      "coordY": 818,
+      "stepControl": 771,
+      "canStep": [7070],
+      "id": 71
+    },
+    {
+      "coordX": 200,
+      "coordY": 815,
+      "stepControl": 772,
+      "id": 72
+    },
+    {
+      "coordX": 165,
+      "coordY": 796,
+      "stepControl": 773,
+      "id": 73
+    },
+    {
+      "coordX": 143,
+      "coordY": 769,
+      "stepControl": 774,
+      "id": 74
+    },
+    {
+      "coordX": 131,
+      "coordY": 740,
+      "stepControl": 775,
+      "id": 75
+    },
+    {
+      "coordX": 123,
+      "coordY": 712,
+      "stepControl": 776,
+      "id": 76
+    },
+    {
+      "coordX": 117,
+      "coordY": 682,
+      "stepControl": 777,
+      "canStep": [524],
+      "id": 77
+    }
+  ],
+  "landingSpots": [
+    {
+      "coordX": 53,
+      "coordY": 181,
+      "stepControl": 501,
+      "canStep": [611,621],
+      "flightControl": 0,
+      "canBoat": true,
+      "id": 1
+    },
+    {
+      "coordX": 124,
+      "coordY": 188,
+      "stepControl": 502,
+      "canStep": [11,77],
+      "flightControl": 2,
+      "canFly": [6,7,101,102,103,104,105,106],
+      "canBoat": false,
+      "id": 2
+    },
+    {
+      "coordX": 293,
+      "coordY": 149,
+      "stepControl": 503,
+      "canStep": [24,31,631,641],
+      "flightControl": 0,
+      "canBoat": true,
+      "id": 3
+    },
+    {
+      "coordX": 323,
+      "coordY": 199,
+      "stepControl": 504,
+      "canStep": [32,45,642],
+      "flightControl": 4,
+      "canFly": [7,15,101,102,103,104,105,106],
+      "canBoat": true,
+      "id": 4
+    },
+    {
+      "coordX": 20,
+      "coordY": 334,
+      "stepControl": 505,
+      "canStep": [63,71,624,667],
+      "flightControl": 0,
+      "canBoat": true,
+      "id": 5
+    },
+    {
+      "coordX": 54,
+      "coordY": 405,
+      "stepControl": 506,
+      "canStep": [61,84,666,681],
+      "flightControl": 6,
+      "canFly": [2,24],
+      "canBoat": true,
+      "id": 6
+    },
+    {
+      "coordX": 152,
+      "coordY": 436,
+      "stepControl": 507,
+      "canStep": [89,684,691],
+      "flightControl": 7,
+      "canFly": [2,4,20,25],
+      "canBoat": true,
+      "id": 7
+    },
+    {
+      "coordX": 168,
+      "coordY": 326,
+      "stepControl": 508,
+      "canStep": [81,94],
+      "flightControl": 0,
+      "canBoat": false,
+      "id": 8
+    },
+    {
+      "coordX": 229,
+      "coordY": 445,
+      "stepControl": 509,
+      "canStep": [91,111,693],
+      "flightControl": 0,
+      "canBoat": true,
+      "id": 9
+    },
+    {
+      "coordX": 234,
+      "coordY": 253,
+      "stepControl": 510,
+      "canStep": [14,161],
+      "flightControl": 0,
+      "canBoat": false,
+      "id": 10
+    },
+    {
+      "coordX": 525,
+      "coordY": 331,
+      "stepControl": 511,
+      "canStep": [173,181,651,661],
+      "flightControl": 11,
+      "canFly": [15,19,107,108,109,110,111,112],
+      "canBoat": true,
+      "id": 11
+    },
+    {
+      "coordX": 438,
+      "coordY": 292,
+      "stepControl": 512,
+      "canStep": [41,51,152],
+      "flightControl": 0,
+      "canBoat": false,
+      "id": 12
+    },
+    {
+      "coordX": 300,
+      "coordY": 493,
+      "stepControl": 513,
+      "canStep": [251,261],
+      "flightControl": 0,
+      "canBoat": false,
+      "id": 13
+    },
+    {
+      "coordX": 319,
+      "coordY": 337,
+      "stepControl": 514,
+      "canStep": [123,131],
+      "flightControl": 0,
+      "canBoat": false,
+      "id": 14
+    },
+    {
+      "coordX": 408,
+      "coordY": 384,
+      "stepControl": 515,
+      "canStep": [133,143,151,167,171,201],
+      "flightControl": 15,
+      "canFly": [4,11,21],
+      "canBoat": false,
+      "id": 15
+    },
+    {
+      "coordX": 651,
+      "coordY": 412,
+      "stepControl": 516,
+      "canStep": [192,231,664,741,757],
+      "flightControl": 16,
+      "canFly": [19,29],
+      "canBoat": true,
+      "id": 16
+    },
+    {
+      "coordX": 548,
+      "coordY": 428,
+      "stepControl": 517,
+      "canStep": [182,191,222],
+      "flightControl": 0,
+      "canBoat": false,
+      "id": 17
+    },
+    {
+      "coordX": 444,
+      "coordY": 442,
+      "stepControl": 518,
+      "canStep": [201,211],
+      "flightControl": 0,
+      "canBoat": false,
+      "id": 18
+    },
+    {
+      "coordX": 494,
+      "coordY": 494,
+      "stepControl": 519,
+      "canStep": [211,221,245,283],
+      "flightControl": 19,
+      "canFly": [11,16,27],
+      "canBoat": false,
+      "id": 19
+    },
+    {
+      "coordX": 288,
+      "coordY": 595,
+      "stepControl": 520,
+      "canStep": [262,271,293,696,701],
+      "flightControl": 20,
+      "canFly": [7,25],
+      "canBoat": true,
+      "id": 20
+    },
+    {
+      "coordX": 398,
+      "coordY": 570,
+      "stepControl": 521,
+      "canStep": [273,281],
+      "flightControl": 21,
+      "canFly": [15,26],
+      "canBoat": false,
+      "id": 21
+    },
+    {
+      "coordX": 536,
+      "coordY": 565,
+      "stepControl": 522,
+      "canStep": [233,242],
+      "flightControl": 0,
+      "canBoat": false,
+      "id": 22
+    },
+    {
+      "coordX": 542,
+      "coordY": 652,
+      "stepControl": 523,
+      "canStep": [241,311,732,747],
+      "flightControl": 0,
+      "canBoat": true,
+      "id": 23
+    },
+    {
+      "coordX": 109,
+      "coordY": 638,
+      "stepControl": 524,
+      "canStep": [675,777],
+      "flightControl": 24,
+      "canFly": [6,26],
+      "canBoat": true,
+      "id": 24
+    },
+    {
+      "coordX": 296,
+      "coordY": 723,
+      "stepControl": 525,
+      "canStep": [341,351,704,722],
+      "flightControl": 25,
+      "canFly": [7,20,26],
+      "canBoat": true,
+      "id": 25
+    },
+    {
+      "coordX": 332,
+      "coordY": 841,
+      "stepControl": 526,
+      "canStep": [353,712,761],
+      "flightControl": 26,
+      "canFly": [21,24,25,27,29,30],
+      "canBoat": true,
+      "id": 26
+    },
+    {
+      "coordX": 451,
+      "coordY": 752,
+      "stepControl": 527,
+      "canStep": [322,331],
+      "flightControl": 27,
+      "canFly": [19,26],
+      "canBoat": false,
+      "id": 27
+    },
+    {
+      "coordX": 411,
+      "coordY": 690,
+      "stepControl": 528,
+      "canStep": [332,343,372],
+      "flightControl": 0,
+      "canBoat": false,
+      "id": 28
+    },
+    {
+      "coordX": 629,
+      "coordY": 684,
+      "stepControl": 529,
+      "canStep": [363,751],
+      "flightControl": 29,
+      "canFly": [16,26],
+      "canBoat": true,
+      "id": 29
+    },
+    {
+      "coordX": 569,
+      "coordY": 771,
+      "stepControl": 530,
+      "canStep": [361,731,767],
+      "flightControl": 30,
+      "canFly": [26],
+      "canBoat": true,
+      "id": 30
+    }
+  ],
+  "startPoints": [
+    {
+      "coordX": 133,
+      "coordY": 110,
+      "canStep": [11,21,612,632],
+      "stepControl": 1001,
+      "flightControl": 101,
+      "canFly": [2,4],
+      "canBoat": true,
+      "id": 1
+    },
+    {
+      "coordX": 148,
+      "coordY": 83,
+      "canStep": [11,21,612,632],
+      "stepControl": 1002,
+      "flightControl": 102,
+      "canFly": [2,4],
+      "canBoat": true,
+      "id": 2
+    },
+    {
+      "coordX": 180,
+      "coordY": 85,
+      "canStep": [11,21,612,632],
+      "stepControl": 1003,
+      "flightControl": 103,
+      "canFly": [2,4],
+      "canBoat": true,
+      "id": 3
+    },
+    {
+      "coordX": 190,
+      "coordY": 110,
+      "canStep": [11,21,612,632],
+      "stepControl": 1004,
+      "flightControl": 104,
+      "canFly": [2,4],
+      "canBoat": true,
+      "id": 4
+    },
+    {
+      "coordX": 176,
+      "coordY": 136,
+      "canStep": [11,21,612,632],
+      "stepControl": 1005,
+      "flightControl": 105,
+      "canFly": [2,4],
+      "canBoat": true,
+      "id": 5
+    },
+    {
+      "coordX": 149,
+      "coordY": 134,
+      "canStep": [11,21,612,632],
+      "stepControl": 1006,
+      "flightControl": 106,
+      "canFly": [2,4],
+      "canBoat": true,
+      "id": 6
+    },
+    {
+      "coordX": 460,
+      "coordY": 145,
+      "canStep": [53,644,653],
+      "stepControl": 1007,
+      "flightControl": 107,
+      "canFly": [11],
+      "canBoat": true,
+      "id": 7
+    },
+    {
+      "coordX": 485,
+      "coordY": 161,
+      "canStep": [53,644,653],
+      "stepControl": 1008,
+      "flightControl": 108,
+      "canFly": [11],
+      "canBoat": true,
+      "id": 8
+    },
+    {
+      "coordX": 484,
+      "coordY": 193,
+      "canStep": [53,644,653],
+      "stepControl": 1009,
+      "flightControl": 109,
+      "canFly": [11],
+      "canBoat": true,
+      "id": 9
+    },
+    {
+      "coordX": 456,
+      "coordY": 205,
+      "canStep": [53,644,653],
+      "stepControl": 1010,
+      "flightControl": 110,
+      "canFly": [11],
+      "canBoat": true,
+      "id": 10
+    },
+    {
+      "coordX": 432,
+      "coordY": 191,
+      "canStep": [53,644,653],
+      "stepControl": 1011,
+      "flightControl": 111,
+      "canFly": [11],
+      "canBoat": true,
+      "id": 11
+    },
+    {
+      "coordX": 436,
+      "coordY": 161,
+      "canStep": [53,644,653],
+      "stepControl": 1012,
+      "flightControl": 112,
+      "canFly": [11],
+      "canBoat": true,
+      "id": 12
+    }
+  ]
+}
