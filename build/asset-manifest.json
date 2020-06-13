@@ -1,0 +1,29 @@
+{
+  "files": {
+    "main.css": "/static/css/main.059fa67c.chunk.css",
+    "main.js": "/static/js/main.b3c3bd5d.chunk.js",
+    "main.js.map": "/static/js/main.b3c3bd5d.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.ef0a5c1e.js",
+    "runtime-main.js.map": "/static/js/runtime-main.ef0a5c1e.js.map",
+    "static/js/2.1e9cb293.chunk.js": "/static/js/2.1e9cb293.chunk.js",
+    "static/js/2.1e9cb293.chunk.js.map": "/static/js/2.1e9cb293.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.3654348960b91c3975299b9ba9c93d6a.js": "/precache-manifest.3654348960b91c3975299b9ba9c93d6a.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.059fa67c.chunk.css.map": "/static/css/main.059fa67c.chunk.css.map",
+    "static/js/2.1e9cb293.chunk.js.LICENSE.txt": "/static/js/2.1e9cb293.chunk.js.LICENSE.txt",
+    "static/media/kartta.jpg": "/static/media/kartta.f8313dfb.jpg",
+    "static/media/keltainen.png": "/static/media/keltainen.09e26e44.png",
+    "static/media/kenka.png": "/static/media/kenka.409d31e2.png",
+    "static/media/punainen.png": "/static/media/punainen.6e7221e4.png",
+    "static/media/rosvo.png": "/static/media/rosvo.b0f310c7.png",
+    "static/media/tahti.png": "/static/media/tahti.7ba661f2.png",
+    "static/media/vihrea.png": "/static/media/vihrea.8a739c6f.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.ef0a5c1e.js",
+    "static/js/2.1e9cb293.chunk.js",
+    "static/css/main.059fa67c.chunk.css",
+    "static/js/main.b3c3bd5d.chunk.js"
+  ]
+}
