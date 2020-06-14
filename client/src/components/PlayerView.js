@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import styled from 'styled-components';
 import kenka from '../images/kenka.png';
 import tahti from '../images/tahti.png';
@@ -7,8 +8,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import playersService from '../services/playersService';
 import { socket } from '../index';
 import { setAlert } from '../reducers/alertReducer';
-// import { logoutUser } from '../reducers/userReducer';
-// import mapSpotsService from '../services/mapSpotsService';
+import { logoutUser } from '../reducers/userReducer';
+import mapSpotsService from '../services/mapSpotsService';
 
 const PlayerView = () => {
     const dispatch = useDispatch();
@@ -18,15 +19,15 @@ const PlayerView = () => {
     const landingTokens = useSelector(state => state.landingTokens);
     const starIsFound = useSelector(state => state.starIsFound);
 
-    // const handleLogout = async () => {
-    //     try {
-    //         await mapSpotsService.removeAllLandingTokens();
-    //         await playersService.removeAllPlayers();
-    //         dispatch(logoutUser());
-    //     } catch (e) {
-    //         console.log('error', e);
-    //     }
-    // };
+    const handleLogout = async () => {
+        try {
+            await mapSpotsService.removeAllLandingTokens();
+            await playersService.removeAllPlayers();
+            dispatch(logoutUser());
+        } catch (e) {
+            console.log('error', e);
+        }
+    };
 
     // tarkistaa Afrikan tähden löytäjän ja ilmoittaa siitä kunnes pelaaja löytää hevosenkengän
     useEffect(() => {
@@ -188,32 +189,34 @@ const PlayerView = () => {
                     <ImageStyle style={showStarImage(player.hasStar)} src={tahti} alt='tähti' />
                     <ImageStyle style={showShoeImage(player.hasShoe)} src={kenka} alt='hevosenkenkä' />
                 </div>
-                {/* <div>
+                <div>
                     <Button color='secondary' variant='outlined' onClick={handleLogout}>
-                        Poista kaikki DB:stä (tokenit & pelaajat)
+                        DeleteDB
                     </Button>
-                </div> */}
+                </div>
             </PlayerHeader>
             <div>
-                <p>Rahat: <b>{player.money}</b></p>
+                <p style={{marginBottom: '-0.5rem'}}>Rahat: <b>{player.money}</b></p>
                 <p>Askeleet: <b>{player.stepsRemain}</b></p>
             </div>
             <div>
                 <Button
+                    style={{width: '100%'}}
                     color='primary'
                     variant='outlined'
                     disabled={playerOnTopOfLandingSpot()}
                     onClick={watchTreasure}
                 >
-                    Katso aarre (100)
+                    <span>Katso <Icon icon='gem' /> (100)</span>
                 </Button>
                 <Button
+                    style={{width: '100%'}}
                     color='primary'
                     variant='outlined'
                     disabled={playerOnTopOfLandingSpot()}
                     onClick={gambleTreasure}
                 >
-                    Uhkapelaa aarre (50%)
+                    <span>Löydä <Icon icon='gem' /> (50%)</span>
                 </Button>
             </div>
         </React.Fragment>
@@ -223,8 +226,8 @@ const PlayerView = () => {
 const PlayerHeader = styled.div`
     display: flex;
     align-items: center;
-    margin-top: -0.5rem;
-    margin-bottom: -1rem;
+    margin-top: -1.5rem;
+    margin-bottom: -1.5rem;
 `;
 
 const PlayerName = styled.h2`

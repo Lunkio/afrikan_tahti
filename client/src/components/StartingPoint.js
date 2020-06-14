@@ -97,6 +97,7 @@ const StartingPoint = () => {
                     style={{top: `${point.coordY-6}px`, left: `${point.coordX-6}px`}}
                     onClick={() => setStartLocation(point)}
                 >
+                    {/* <p>{point.id}</p> */}
                 </StartPoint>
             )}
         </div>

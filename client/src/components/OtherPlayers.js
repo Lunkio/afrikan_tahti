@@ -23,9 +23,9 @@ const OtherPlayers = () => {
     };
 
     return (
-        <div style={{marginTop: '1rem'}}>
+        <div>
             <hr />
-            <h3>Muut pelaajat:</h3>
+            <Header>Muut pelaajat:</Header>
             {otherPlayers.map(player =>
                 <PlayerSection key={player.id}>
                     <PlayerHeader>
@@ -47,6 +47,11 @@ const OtherPlayers = () => {
         </div>
     );
 };
+
+const Header = styled.h4`
+    margin-top: 0rem;
+    margin-bottom: 0.5rem;
+`;
 
 const PlayerSection = styled.div`
     border: 1.5px solid grey;

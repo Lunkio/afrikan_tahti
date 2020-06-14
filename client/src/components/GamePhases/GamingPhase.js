@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import styled from 'styled-components';
 import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
@@ -198,7 +199,7 @@ const GamingPhase = () => {
                         player.boatTicket = false;
                     } else {
                         if (player.money < 100) {
-                            dispatch(setAlert('Ei rahaa laivalippuun'));
+                            dispatch(setAlert('Ei rahaa laivamatkaan'));
                             return;
                         }
                         player.money = player.money -100;
@@ -237,7 +238,7 @@ const GamingPhase = () => {
             </GameHeader>
             <DiceContainer>
                 <Button disabled={diceCanBeThrown()} onClick={throwDice} color='primary' variant='contained'>
-                    Heitä noppaa
+                    <span>Heitä <Icon icon='dice' /></span>
                 </Button>
                 <div style={notThrowingDice}>
                     <Dice>{diceValue}</Dice>
@@ -248,36 +249,39 @@ const GamingPhase = () => {
             </DiceContainer>
             <ButtonsContainer>
                 <Button
+                    style={{width: '100%'}}
                     color='secondary'
                     variant='outlined'
                     disabled={playerCanBuyFlightTicket()}
                     onClick={flyPlayer}
                 >
                     {player.flightTicket
-                        ? 'Peru lento'
-                        : 'Osta lento (300)'
+                        ? (<span>Peru lento <Icon icon='plane-slash' /></span>)
+                        : (<span>Lennä <Icon icon='plane' /> (300)</span>)
                     }
                 </Button>
                 <Button
+                    style={{width: '100%'}}
                     color='primary'
                     variant='outlined'
                     disabled={playerCanBuyBoatTicket(player.freeBoatTicket)}
                     onClick={() => playerBuyBoatTicket('costs')}
                 >
                     {player.boatTicket
-                        ? 'Peru laivamatka'
-                        : 'Osta laivalippu (100)'
+                        ? (<span>Peru matka <Icon icon='ship' /></span>)
+                        : (<span>Lippu <Icon icon='ship' /> (100)</span>)
                     }
                 </Button>
                 <Button
+                    style={{width: '100%'}}
                     color='primary'
                     variant='outlined'
                     disabled={playerCanBuyBoatTicket(player.boatTicket)}
                     onClick={() => playerBuyBoatTicket('free')}
                 >
                     {player.freeBoatTicket
-                        ? 'Peru laivamatka'
-                        : 'Ilmainen laiva (+2 askelta)'
+                        ? (<span>Peru matka <Icon icon='ship' /></span>)
+                        : (<span>Ilmainen <Icon icon='ship' /></span>)
                     }
                 </Button>
             </ButtonsContainer>

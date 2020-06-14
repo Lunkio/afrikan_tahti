@@ -7,15 +7,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import { initUser } from './reducers/userReducer';
 import { newPlayer, editPlayerDetails, removePlayer } from './reducers/playersReducer';
 import { setAlert } from './reducers/alertReducer';
-import { initPlayers } from './reducers/playersReducer';
 import { initLandingSpots, revealLandingSpot } from './reducers/landingSpotReducer';
 import { initLandingTokens } from './reducers/landingTokenReducer';
 import { initStartPoints } from './reducers/startPointReducer';
 import { initLandRoutes } from './reducers/landRouteReducer';
 import { initSeaRoutes } from './reducers/seaRouteReducer';
 import { foundStar } from './reducers/starIsFoundReducer';
+// import { initPlayers } from './reducers/playersReducer';
+// import playersService from './services/playersService';
 import mapSpotsService from './services/mapSpotsService';
-import playersService from './services/playersService';
 import AlertMessage from './components/AlertMessage';
 import Kartta from './components/Kartta';
 import LandingSpot from './components/LandingSpot';
@@ -49,8 +49,8 @@ const App = ({ updater }) => {
                 await dispatch(initSeaRoutes());
                 dispatch(initUser());
                 // for dev use these two lines down
-                const allPlayersFromDB = await playersService.getAllPlayers();
-                dispatch(initPlayers(allPlayersFromDB));
+                // const allPlayersFromDB = await playersService.getAllPlayers();
+                // dispatch(initPlayers(allPlayersFromDB));
             } catch (e) {
                 console.log('error', e);
                 dispatch(setAlert('All info was not retrieved from DB'));
@@ -172,8 +172,8 @@ const App = ({ updater }) => {
                             <OtherPlayers />
                         </PlayerSection>
                     </PlayArena>
+                    <Pawn />
                 </Centered>
-                <Pawn />
             </div>
             }
             {gameOver && <GameOver gameOver={gameOver} setGameOver={setGameOver} setPlayersLobbyReady={setPlayersLobbyReady} setPlayersGameReady={setPlayersGameReady} />}
