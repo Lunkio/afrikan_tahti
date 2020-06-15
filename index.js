@@ -6,6 +6,10 @@ const io = require('socket.io')(server);
 
 io.on('connection', (socket) => {
     console.log('Socket-io connected');
+
+    socket.on('addTokens', (tokens) => {
+        io.emit('tokensAdded', tokens);
+    });
     
     socket.on('addPlayer', (player) => {
         io.emit('playerJoined', player);

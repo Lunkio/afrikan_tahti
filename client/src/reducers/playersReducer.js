@@ -5,9 +5,11 @@ const playersReducer = (state = [], action) => {
     case 'NEW_PLAYER':
         return [...state, action.data];
     case 'EDIT_PLAYER_DETAILS':
-        return state.map(player => player.id !== action.data.id ? player : action.data);
+        return state.map(player => player.uuid !== action.data.uuid ? player : action.data);
     case 'REMOVE_PLAYER':
-        return state.filter(player => player.id !== action.data);
+        return state.filter(player => player.uuid !== action.data);
+    case 'REMOVE_ALL_PLAYERS':
+        return [];
     default: return state;
     }
 };
@@ -36,7 +38,13 @@ export const editPlayerDetails = (player) => {
 export const removePlayer = (player) => {
     return {
         type: 'REMOVE_PLAYER',
-        data: player.id
+        data: player.uuid
+    };
+};
+
+export const removeAllPlayersFromState = () => {
+    return {
+        type: 'REMOVE_ALL_PLAYERS'
     };
 };
 

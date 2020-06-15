@@ -1,33 +1,23 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import pahvi from '../images/pahvi.png';
 import { movePawn, flyPawn } from './Pawn';
-import playersService from '../services/playersService';
 import { socket } from '../index';
-import { setAlert } from '../reducers/alertReducer';
 
 const LandingSpot = () => {
-    const dispatch = useDispatch();
     const players = useSelector(state => state.players);
     const user = useSelector(state => state.user);
     const landingSpots = useSelector(state => state.landingSpots);
     const landingTokens = useSelector(state => state.landingTokens);
-    //console.log('landingtokens', landingTokens);
 
-    const checkIfFirstInCapeTown = async (player) => {
-        try {
-            if (player.stepControl === 526) {
-                if (!(players.find(p => p.firstInCapeTown === true))) {
-                    player.firstInCapeTown = true;
-                    player.money = player.money +500;
-                    const editedPlayer = await playersService.editPlayer(player);
-                    socket.emit('playerToEdit', editedPlayer);
-                }
+    const checkIfFirstInCapeTown = (player) => {
+        if (player.stepControl === 526) {
+            if (!(players.find(p => p.firstInCapeTown === true))) {
+                player.firstInCapeTown = true;
+                player.money = player.money +500;
+                socket.emit('playerToEdit', player);
             }
-        } catch (e) {
-            console.log('error', e);
-            dispatch(setAlert('Jokin meni Cape Town tarkastuksessa pieleen =('));
         }
     };
 
@@ -58,7 +48,7 @@ const LandingSpot = () => {
         if (player.stepsRemain === 0) {
             return;
         }
-        spot.canStep.forEach(async (v) => {
+        spot.canStep.forEach((v) => {
             if (v === player.stepControl) {
                 movePawn(spot, player);
                 checkIfFirstInCapeTown(player);
@@ -68,25 +58,15 @@ const LandingSpot = () => {
     };
 
     const treasureHider = (spot) => {
+        // eslint-disable-next-line
+        if (process.env.NODE_ENV === 'development') {
+            return !spot.revealed ? 'pahvi pahvi-peittaa-false' : 'pahvi pahvi-peittaa-true';
+        }
         return spot.revealed ? 'pahvi pahvi-peittaa-false' : 'pahvi pahvi-peittaa-true';
     };
 
     return (
         <React.Fragment>
-            {landingTokens.length === 0 &&
-            <div>
-                {landingSpots.map((spot) =>
-                    <LandingSpotStyle 
-                        key={spot.id}
-                        style={{top: `${spot.coordY-17}px`, left: `${spot.coordX-17}px`}}
-                        className='landing-spot-focus-removal'
-                        onClick={() => movePlayer(spot)}
-                    >
-                        {/* <p>{spot.id}</p> */}
-                    </LandingSpotStyle>
-                )}
-            </div>
-            }
             {landingTokens.length === 30 && landingSpots.length > 0 &&
             <div>
                 {landingSpots.map((spot) =>
@@ -110,7 +90,7 @@ const LandingSpot = () => {
 const LandingSpotStyle = styled.button`
     height: 34px;
     width: 34px;
-    background-color: rgb(211, 12, 12);
+    background-color: rgba(211, 12, 12);
     border-radius: 100%;
     border: 1px solid black;
     position: absolute;

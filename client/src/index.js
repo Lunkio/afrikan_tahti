@@ -9,6 +9,19 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import theme from './styles/theme';
 import io from 'socket.io-client';
 
+// lisää tokenit DB:hen
+// import landingTokenService from './services/landingTokenService';
+// import tokens from './gameUtils';
+// const addTokensToDB = async (tokens) => {
+//     try {
+//         await landingTokenService.removeAllLandingTokens();
+//         await landingTokenService.createLandingTokens(tokens);
+//     } catch (e) {
+//         console.log('error', e);
+//     }
+// };
+// addTokensToDB(tokens);
+
 // tällä voit klikkailemalla lisätä kuvia/spotteja pelikentälle, laita vain json-server päälle ja vaihda mapSpotsServicen funktio oikeaan spottiin
 // import mapSpotsService from './services/mapSpotsService';
 // let canvas = document.getElementById('root');
@@ -28,6 +41,7 @@ import io from 'socket.io-client';
 // };
 // canvas.addEventListener('mousedown', onMouseClick);
 
+// eslint-disable-next-line
 export let socket;
 // eslint-disable-next-line
 if (process.env.NODE_ENV === 'development') {
@@ -35,8 +49,6 @@ if (process.env.NODE_ENV === 'development') {
 } else {
     socket = io('https://afrikan-tahti.herokuapp.com/');
 }
-// export let socket = io(':3001');
-// export let socket = io('https://afrikan-tahti.herokuapp.com/');
 
 const renderApp = () => {
     ReactDOM.render(

@@ -3,52 +3,43 @@ import PropTypes from 'prop-types';
 import { Button, Card, CardContent, Typography } from '@material-ui/core';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
-import playersService from '../../services/playersService';
 import { removeLandingTokens } from '../../reducers/landingTokenReducer';
+import { hideLandingSpots } from '../../reducers/landingSpotReducer';
 import { logoutUser } from '../../reducers/userReducer';
-import { setAlert } from '../../reducers/alertReducer';
 import { socket } from '../../index';
 
 const GameOver = ({ gameOver, setGameOver, setPlayersLobbyReady, setPlayersGameReady }) => {
     const dispatch = useDispatch();
     const user = useSelector(state => state.user);
     const players = useSelector(state => state.players);
+    const landingSpots = useSelector(state => state.landingSpots);
     const [winnerName, setWinnerName] = useState('');
 
     useEffect(() => {
         const winner = players.find(p => p.winner === true);
         if (winner) {
             dispatch(removeLandingTokens());
+            dispatch(hideLandingSpots(landingSpots));
             setWinnerName(winner.name);
-            players.forEach(async (player) => {
-                try {
-                    player.lobbyReady = false;
-                    player.startReady = false;
-                    const editedPlayer = await playersService.editPlayer(player);
-                    socket.emit('playerToEdit', editedPlayer);
-                } catch (e) {
-                    console.log('error', e);
-                    dispatch(setAlert('Jokin meni lobby-asetuksissa pieleen =('));
-                }
+            players.forEach((player) => {
+                player.lobbyReady = false;
+                player.startReady = false;
+                socket.emit('playerToEdit', player);
             });
-            const unWinPlayer = async (player) => {
-                try {
-                    player.winner = false;
-                    const editedPlayer = await playersService.editPlayer(player);
-                    socket.emit('playerToEdit', editedPlayer);
-                } catch (e) {
-                    console.log('error', e);
-                    dispatch(setAlert('Pelaajan voittostatusta ei voitu muuttaa =('));
-                }
+            const unWinPlayer = (player) => {
+                player.winner = false;
+                socket.emit('playerToEdit', player);
             };
             unWinPlayer(winner);
         }
     // eslint-disable-next-line
     }, [gameOver]);
 
-    const playerWantsNewGame = async () => {
+    const playerWantsNewGame = () => {
         const player = players.find(p => p.uuid === user.uuid);
         if (player) {
+            player.host = false;
+            player.color = '';
             player.lobbyReady = false;
             player.startReady = false;
             player.stepControl = 0;
@@ -71,33 +62,21 @@ const GameOver = ({ gameOver, setGameOver, setPlayersLobbyReady, setPlayersGameR
             player.firstInCapeTown = false;
             player.firstInGoldCoast = false;
             player.winner = false;
-            try {
-                const editedPlayer = await playersService.editPlayer(player);
-                socket.emit('playerToEdit', editedPlayer);
-                setGameOver(false);
-                setPlayersLobbyReady(false);
-                setPlayersGameReady(false);
-            } catch (e) {
-                console.log('error', e);
-                dispatch(setAlert('Jokin meni uuden pelin aloittamisessa pieleen =('));
-            }
+            socket.emit('playerToEdit', player);
+            setGameOver(false);
+            setPlayersLobbyReady(false);
+            setPlayersGameReady(false);
         }
     };
 
-    const playerWantsToLeave = async () => {
+    const playerWantsToLeave = () => {
         const player = players.find(p => p.uuid === user.uuid);
         if (player) {
-            try {
-                await playersService.removeOnePlayer(player);
-                socket.emit('removePlayer', player);
-                dispatch(logoutUser());
-                setGameOver(false);
-                setPlayersLobbyReady(false);
-                setPlayersGameReady(false);
-            } catch (e) {
-                console.log('error', e);
-                dispatch(setAlert('Jokin meni pelaajan poistamisessa pieleen =('));
-            }
+            socket.emit('removePlayer', player);
+            dispatch(logoutUser());
+            setGameOver(false);
+            setPlayersLobbyReady(false);
+            setPlayersGameReady(false);
         }
     };
 

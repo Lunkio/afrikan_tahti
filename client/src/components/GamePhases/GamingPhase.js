@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { setAlert } from '../../reducers/alertReducer';
-import playersService from '../../services/playersService';
 import { socket } from '../../index';
 
 const GamingPhase = () => {
@@ -23,27 +22,21 @@ const GamingPhase = () => {
 
     // asettaa pelaajille (player.turn) arvoksi 0,1,2 jne... Vain kerran
     useEffect(() => {
-        const gameTurn = async () => {
+        const gameTurn = () => {
             let turnNumber = 0;
             let turnAmount = 0;
-            try {
-                while (turnAmount < players.length) {
-                    for (let i = 0; i < players.length; i++) {
-                        if (players[i].turnOrder === turnNumber) {
-                            players[i].turnOrder = turnAmount;
-                            if (players[i].turnOrder === 0) {
-                                players[i].canPlay = true;
-                            }
-                            const playerTurn = await playersService.editPlayer(players[i]);
-                            socket.emit('playerToEdit', playerTurn);
-                            turnAmount++;
+            while (turnAmount < players.length) {
+                for (let i = 0; i < players.length; i++) {
+                    if (players[i].turnOrder === turnNumber) {
+                        players[i].turnOrder = turnAmount;
+                        if (players[i].turnOrder === 0) {
+                            players[i].canPlay = true;
                         }
+                        socket.emit('playerToEdit', players[i]);
+                        turnAmount++;
                     }
-                    turnNumber++;
                 }
-            } catch (e) {
-                console.log('error', e);
-                dispatch(setAlert('Jokin meni vuorojen asettelussa pieleen =('));
+                turnNumber++;
             }
         };
         gameTurn();
@@ -62,7 +55,7 @@ const GamingPhase = () => {
         return null;
     }
 
-    const changeTurn = async () => {
+    const changeTurn = () => {
         const previousPlayer = players.find(p => p.canPlay === true);
         previousPlayer.canPlay = false;
         previousPlayer.flightTicket = false;
@@ -79,17 +72,10 @@ const GamingPhase = () => {
         if (nextPlayer.freeBoatTicket) {
             nextPlayer.stepsRemain = 2;
         }
-        try {
-            socket.emit('playerToEdit', previousPlayer);
-            await playersService.editPlayer(previousPlayer);
-            const editedNextPlayer = await playersService.editPlayer(nextPlayer);
-            socket.emit('playerToEdit', editedNextPlayer);
-            setDiceBeenThrown(false);
-        } catch (e) {
-            console.log('error', e);
-            dispatch(setAlert('Jokin meni vuoron antamisessa seuraavalle pelaajalle pieleen =('));
-        }
-    }; 
+        socket.emit('playerToEdit', previousPlayer);
+        socket.emit('playerToEdit', nextPlayer);
+        setDiceBeenThrown(false);
+    };
 
     const endTurn = () => {
         if (confirmEndTurn) {
@@ -114,7 +100,7 @@ const GamingPhase = () => {
         }
     };
 
-    const throwDice = async () => {
+    const throwDice = () => {
         const player = players.find(p => p.canPlay === true);
         if (player) {
             let randomNumber = Math.round(Math.random() * (6 - 1) + 1);
@@ -125,8 +111,7 @@ const GamingPhase = () => {
                 setThrowingDice(false);
             }, 500);
             player.stepsRemain = randomNumber;
-            const editedPlayer = await playersService.editPlayer(player);
-            socket.emit('playerToEdit', editedPlayer);
+            socket.emit('playerToEdit', player);
         }
     };
     const notThrowingDice = { display: throwingDice ? 'none' : '', marginLeft: '1rem' };
@@ -147,7 +132,7 @@ const GamingPhase = () => {
         return true;
     };
 
-    const flyPlayer = async () => {
+    const flyPlayer = () => {
         if (player.canPlay) {
             let spot = undefined;
             spot = landingSpots.find(s => s.stepControl === player.stepControl);
@@ -161,14 +146,8 @@ const GamingPhase = () => {
                 dispatch(setAlert('Ei rahaa lentämiseen'));
                 return;
             }
-            try {
-                player.flightTicket = !player.flightTicket;
-                const editedPlayer = await playersService.editPlayer(player);
-                socket.emit('playerToEdit', editedPlayer);
-            } catch (e) {
-                console.log('error', e);
-                dispatch(setAlert('Jokin meni lentämisessä pieleen =('));
-            }
+            player.flightTicket = !player.flightTicket;
+            socket.emit('playerToEdit', player);
         }
     };
 
@@ -190,38 +169,32 @@ const GamingPhase = () => {
         return true;
     };
 
-    const playerBuyBoatTicket = async (type) => {
+    const playerBuyBoatTicket = (type) => {
         if (player.canPlay) {
-            try {
-                if (type === 'costs') {
-                    if (player.boatTicket) {
-                        player.money = player.money +100;
-                        player.boatTicket = false;
-                    } else {
-                        if (player.money < 100) {
-                            dispatch(setAlert('Ei rahaa laivamatkaan'));
-                            return;
-                        }
-                        player.money = player.money -100;
-                        player.boatTicket = true;
+            if (type === 'costs') {
+                if (player.boatTicket) {
+                    player.money = player.money +100;
+                    player.boatTicket = false;
+                } else {
+                    if (player.money < 100) {
+                        dispatch(setAlert('Ei rahaa laivamatkaan'));
+                        return;
                     }
+                    player.money = player.money -100;
+                    player.boatTicket = true;
                 }
-                if (type === 'free') {
-                    if (player.freeBoatTicket) {
-                        player.freeBoatTicket = false;
-                        player.stepsRemain = stepsRemainInCaseBoatTicketCancel;
-                    } else {
-                        player.freeBoatTicket = true;
-                        setStepsRemainInCaseBoatTicketCancel(player.stepsRemain);
-                        player.stepsRemain = 2;
-                    }
-                }
-                const editedPlayer = await playersService.editPlayer(player);
-                socket.emit('playerToEdit', editedPlayer);
-            } catch (e) {
-                console.log('error', e);
-                dispatch(setAlert('Jokin meni laivalippujen hankinnassa pieleen =('));
             }
+            if (type === 'free') {
+                if (player.freeBoatTicket) {
+                    player.freeBoatTicket = false;
+                    player.stepsRemain = stepsRemainInCaseBoatTicketCancel;
+                } else {
+                    player.freeBoatTicket = true;
+                    setStepsRemainInCaseBoatTicketCancel(player.stepsRemain);
+                    player.stepsRemain = 2;
+                }
+            }
+            socket.emit('playerToEdit', player);
         }
     };
 

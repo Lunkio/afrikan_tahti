@@ -10,6 +10,10 @@ const OtherPlayers = () => {
 
     const otherPlayers = players.filter(p => p.uuid !== user.uuid);
 
+    if (otherPlayers.length === 0) {
+        return null;
+    }
+
     const getPlayerColor = (color) => {
         return {backgroundColor: `${color}`};
     };
@@ -27,7 +31,7 @@ const OtherPlayers = () => {
             <hr />
             <Header>Muut pelaajat:</Header>
             {otherPlayers.map(player =>
-                <PlayerSection key={player.id}>
+                <PlayerSection key={player.uuid}>
                     <PlayerHeader>
                         <div style={{display: 'flex'}}>
                             <PlayerName>{player.name}</PlayerName>

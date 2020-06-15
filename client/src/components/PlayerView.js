@@ -5,11 +5,10 @@ import kenka from '../images/kenka.png';
 import tahti from '../images/tahti.png';
 import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
-import playersService from '../services/playersService';
-import { socket } from '../index';
 import { setAlert } from '../reducers/alertReducer';
 import { logoutUser } from '../reducers/userReducer';
-import mapSpotsService from '../services/mapSpotsService';
+import { removeAllPlayersFromState } from '../reducers/playersReducer';
+import { socket } from '../index';
 
 const PlayerView = () => {
     const dispatch = useDispatch();
@@ -19,14 +18,9 @@ const PlayerView = () => {
     const landingTokens = useSelector(state => state.landingTokens);
     const starIsFound = useSelector(state => state.starIsFound);
 
-    const handleLogout = async () => {
-        try {
-            await mapSpotsService.removeAllLandingTokens();
-            await playersService.removeAllPlayers();
-            dispatch(logoutUser());
-        } catch (e) {
-            console.log('error', e);
-        }
+    const handleLogout = () => {
+        dispatch(logoutUser());
+        dispatch(removeAllPlayersFromState());
     };
 
     // tarkistaa Afrikan tähden löytäjän ja ilmoittaa siitä kunnes pelaaja löytää hevosenkengän
@@ -109,7 +103,7 @@ const PlayerView = () => {
         return true;
     };
 
-    const watchTreasure = async () => {
+    const watchTreasure = () => {
         if (player.canPlay) {
             const landingSpot = landingSpots.find(s => s.stepControl === player.stepControl);
             if (!landingSpot) {
@@ -123,25 +117,19 @@ const PlayerView = () => {
             if (!landingToken) {
                 return;
             }
-            try {
-                player.stepsRemain = 0;
-                player.hasWatchedTreasure = true;
-                player.money = player.money -100;
-                checkLandingTokenType(landingToken, player);
-                const editedPlayer = await playersService.editPlayer(player);
-                socket.emit('playerToEdit', editedPlayer);
-                socket.emit('revealLandingSpot', landingSpot);
-                if (editedPlayer.hasStar) {
-                    socket.emit('starIsFound');
-                }
-            } catch (e) {
-                console.log('error', e);
-                dispatch(setAlert('Jokin meni aarteen katsomisessa pieleen =('));
+            player.stepsRemain = 0;
+            player.hasWatchedTreasure = true;
+            player.money = player.money -100;
+            checkLandingTokenType(landingToken, player);
+            socket.emit('playerToEdit', player);
+            socket.emit('revealLandingSpot', landingSpot);
+            if (player.hasStar) {
+                socket.emit('starIsFound');
             }
         }
     };
 
-    const gambleTreasure = async () => {
+    const gambleTreasure = () => {
         if (player.canPlay) {
             const landingSpot = landingSpots.find(s => s.stepControl === player.stepControl);
             if (!landingSpot) {
@@ -151,22 +139,16 @@ const PlayerView = () => {
             if (!landingToken) {
                 return;
             }
-            try {
-                player.stepsRemain = 0;
-                if (Math.random() > 0.5) {
-                    player.hasWatchedTreasure = true;
-                    checkLandingTokenType(landingToken, player);
-                    socket.emit('revealLandingSpot', landingSpot);
-                } else {
-                    dispatch(setAlert('Aarre ei löytynyt tällä kertaa =('));
-                }
-                player.hasGambled = true;
-                const editedPlayer = await playersService.editPlayer(player);
-                socket.emit('playerToEdit', editedPlayer);
-            } catch (e) {
-                console.log('error', e);
-                dispatch(setAlert('Jokin meni aarteen katsomisessa pieleen =('));
+            player.stepsRemain = 0;
+            if (Math.random() > 0.5) {
+                player.hasWatchedTreasure = true;
+                checkLandingTokenType(landingToken, player);
+                socket.emit('revealLandingSpot', landingSpot);
+            } else {
+                dispatch(setAlert('Aarre ei löytynyt tällä kertaa =('));
             }
+            player.hasGambled = true;
+            socket.emit('playerToEdit', player);
         }
     };
 
@@ -191,7 +173,7 @@ const PlayerView = () => {
                 </div>
                 <div>
                     <Button color='secondary' variant='outlined' onClick={handleLogout}>
-                        DeleteDB
+                        DeleteAll
                     </Button>
                 </div>
             </PlayerHeader>
@@ -207,7 +189,7 @@ const PlayerView = () => {
                     disabled={playerOnTopOfLandingSpot()}
                     onClick={watchTreasure}
                 >
-                    <span>Katso <Icon icon='gem' /> (100)</span>
+                    <span>Löydä <Icon icon='gem' /> (100)</span>
                 </Button>
                 <Button
                     style={{width: '100%'}}
@@ -216,7 +198,7 @@ const PlayerView = () => {
                     disabled={playerOnTopOfLandingSpot()}
                     onClick={gambleTreasure}
                 >
-                    <span>Löydä <Icon icon='gem' /> (50%)</span>
+                    <span>Tutki <Icon icon='gem' /> (50%)</span>
                 </Button>
             </div>
         </React.Fragment>

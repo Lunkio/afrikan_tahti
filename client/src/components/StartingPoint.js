@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import playersService from '../services/playersService';
 import { socket } from '../index';
 import { setAlert } from '../reducers/alertReducer';
 import { movePawn, flyPawn } from './Pawn';
@@ -12,18 +11,12 @@ const StartingPoint = () => {
     const user = useSelector(state => state.user);
     const startPoints = useSelector(state => state.startPoints);
 
-    const checkIfWinner = async (player) => {
-        try {
-            if (player.stepControl >= 1001 && player.stepControl <= 1012) {
-                if (player.hasStar || player.hasShoe) {
-                    player.winner = true;
-                    const editedPlayer = await playersService.editPlayer(player);
-                    socket.emit('playerToEdit', editedPlayer);
-                }
+    const checkIfWinner = (player) => {
+        if (player.stepControl >= 1001 && player.stepControl <= 1012) {
+            if (player.hasStar || player.hasShoe) {
+                player.winner = true;
+                socket.emit('playerToEdit', player);
             }
-        } catch (e) {
-            console.log('error', e);
-            dispatch(setAlert('Jokin meni voittajan tarkistuksessa pieleen =('));
         }
     };
 
@@ -63,30 +56,24 @@ const StartingPoint = () => {
         });
     };
 
-    const setStartLocation = async (point) => {
-        try {
-            if (players.find(p => p.stepControl === point.stepControl)) {
-                dispatch(setAlert('Aloituspaikka jo valittu'));
-                return;
-            }
-            const player = players.find(p => p.uuid === user.uuid);
-            if (player.canPlay) {
-                movePlayer(point);
-                return;
-            }
-            if (player.startReady) {
-                return;
-            }
-            player.stepControl = point.stepControl;
-            player.flightControl = point.flightControl;
-            player.coordX = point.coordX;
-            player.coordY = point.coordY;
-            const editedPlayer = await playersService.editPlayer(player);
-            socket.emit('playerToEdit', editedPlayer);
-        } catch (e) {
-            console.log('error', e);
-            dispatch(setAlert('Jokin meni pieleen =('));
+    const setStartLocation = (point) => {
+        if (players.find(p => p.stepControl === point.stepControl)) {
+            dispatch(setAlert('Aloituspaikka jo valittu'));
+            return;
         }
+        const player = players.find(p => p.uuid === user.uuid);
+        if (player.canPlay) {
+            movePlayer(point);
+            return;
+        }
+        if (player.startReady) {
+            return;
+        }
+        player.stepControl = point.stepControl;
+        player.flightControl = point.flightControl;
+        player.coordX = point.coordX;
+        player.coordY = point.coordY;
+        socket.emit('playerToEdit', player);
     };
 
     return (

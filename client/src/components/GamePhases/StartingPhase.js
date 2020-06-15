@@ -2,7 +2,6 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button } from '@material-ui/core';
 import { setAlert } from '../../reducers/alertReducer';
-import playersService from '../../services/playersService';
 import { socket } from '../../index';
 
 const StartingPhase = () => {
@@ -15,40 +14,25 @@ const StartingPhase = () => {
         return null;
     }
 
-    const playerStartReady = async () => {
-        try {
-            if (player.stepControl === 0) {
-                dispatch(setAlert('Valitse aloituspaikka'));
-                return;
-            }
-            player.startReady = !player.startReady;
-            const playerIsStartReady = await playersService.editPlayer(player);
-            socket.emit('playerToEdit', playerIsStartReady);
-        } catch (e) {
-            console.log('error', e);
-            dispatch(setAlert('Jokin meni aloituksessa pieleen'));
+    const playerStartReady = () => {
+        if (player.stepControl === 0) {
+            dispatch(setAlert('Valitse aloituspaikka'));
+            return;
         }
-    };
-
-    const startInfoText = () => {
-        return player.startReady ? 'Odota muita pelaajia...' : 'Valitse aloituspaikka';
-    };
-
-    const buttonCheckIfReady = () => {
-        if (player) {
-            return player.startReady;
-        } else {
-            return false;
-        }
+        player.startReady = !player.startReady;
+        socket.emit('playerToEdit', player);
     };
 
     return (
         <div>
             <h3>
-                {startInfoText()}
+                {player.startReady
+                    ? 'Odota muita pelaajia...'
+                    : 'Valitse aloituspaikka'
+                }
             </h3>
             <Button onClick={playerStartReady} color='primary' variant='contained'>
-                {buttonCheckIfReady()
+                {player.startReady
                     ? 'Vaihdankin aloituspaikkaa'
                     : 'Valmis'
                 }

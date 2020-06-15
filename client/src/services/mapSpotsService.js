@@ -20,21 +20,6 @@ const getStartPoints = async () => {
     return res.data;
 };
 
-const getAllLandingTokens = async () => {
-    const res = await axios.get('/landingTokens');
-    return res.data;
-};
-
-const createLandingTokens = async (tokens) => {
-    const res = await axios.post('/landingTokens', tokens);
-    return res.data;
-};
-
-const removeAllLandingTokens = async () => {
-    const res = await axios.delete('/landingTokens');
-    return res.data;
-};
-
 const createStartPoint = async (point) => {
     const res = await axios.post('/startPoints', point);
     return res.data;
@@ -60,9 +45,6 @@ export default {
     getLandRoutes,
     getSeaRoutes,
     getStartPoints,
-    getAllLandingTokens,
-    createLandingTokens,
-    removeAllLandingTokens,
     createStartPoint,
     createLandRoute,
     createSeaRoute,

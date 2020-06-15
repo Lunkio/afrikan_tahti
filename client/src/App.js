@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import tokens from './gameUtils';
 import { socket } from './index';
 import { useSelector, useDispatch } from 'react-redux';
 import { initUser } from './reducers/userReducer';
@@ -13,9 +12,7 @@ import { initStartPoints } from './reducers/startPointReducer';
 import { initLandRoutes } from './reducers/landRouteReducer';
 import { initSeaRoutes } from './reducers/seaRouteReducer';
 import { foundStar } from './reducers/starIsFoundReducer';
-// import { initPlayers } from './reducers/playersReducer';
-// import playersService from './services/playersService';
-import mapSpotsService from './services/mapSpotsService';
+import landingTokenService from './services/landingTokenService';
 import AlertMessage from './components/AlertMessage';
 import Kartta from './components/Kartta';
 import LandingSpot from './components/LandingSpot';
@@ -43,14 +40,11 @@ const App = ({ updater }) => {
     useEffect(() => {
         const fetch = async () => {
             try {
-                //await dispatch(initLandingSpots());
+                await dispatch(initLandingSpots());
                 await dispatch(initStartPoints());
                 await dispatch(initLandRoutes());
                 await dispatch(initSeaRoutes());
                 dispatch(initUser());
-                // for dev use these two lines down
-                // const allPlayersFromDB = await playersService.getAllPlayers();
-                // dispatch(initPlayers(allPlayersFromDB));
             } catch (e) {
                 console.log('error', e);
                 dispatch(setAlert('All info was not retrieved from DB'));
@@ -62,6 +56,10 @@ const App = ({ updater }) => {
 
     // kuuntelee serveriä
     useEffect(() => {
+        socket.on('tokensAdded', (tokens) => {
+            dispatch(initLandingTokens(tokens));
+        });
+
         socket.on('playerJoined', (player) => {
             dispatch(newPlayer(player));
         });
@@ -84,23 +82,7 @@ const App = ({ updater }) => {
     // eslint-disable-next-line
     }, []);
 
-    const addTokensToDB = async (tokens) => {
-        try {
-            await mapSpotsService.removeAllLandingTokens();
-            const shuffleTokens = (tokens) => {
-                for (let i = tokens.length -1; i > 0; i--) {
-                    let j = Math.floor(Math.random() * (i +1));
-                    [tokens[i], tokens[j]] = [tokens[j], tokens[i]];
-                }
-            };
-            shuffleTokens(tokens);
-            await mapSpotsService.createLandingTokens(tokens);
-        } catch (e) {
-            console.log('error', e);
-        }
-    };
-
-    // Menee pelinäkymään kun pelaajat valmiina lobbyssa ja host-pelaaja luo tokenit peliin
+    // Menee pelinäkymään kun pelaajat valmiina lobbyssa
     useEffect(() => {
         if (!playersLobbyReady) {
             if (players.length === 0) {
@@ -108,40 +90,48 @@ const App = ({ updater }) => {
             } else {
                 const allPlayersNotReady = players.find(p => p.lobbyReady === false);
                 if (allPlayersNotReady === undefined) {
-                    dispatch(initLandingSpots());
                     setPlayersLobbyReady(true);
-                    if (user) {
-                        const player = players.find(p => p.uuid === user.uuid);
-                        if (player.host) {
-                            addTokensToDB(tokens);
-                        }
-                    }
                 }
             }
         }
     // eslint-disable-next-line
     }, [players]);
 
-    // Asettaa landingTokenit kartalle ja aloittaa pelin kun pelaajat pelivalmiita
+    // Asettaa landingTokenit kartalle ja aloittaa pelin kun pelaajat pelivalmiita, host tuo tokenit muille pelaajille
     useEffect(() => {
         if (!playersGameReady) {
             if (players.length === 0) {
                 setPlayersGameReady(false);
             } else {
-                const allPlayersReady = players.find(p => p.startReady === false);
-                if (allPlayersReady === undefined) {
+                const allPlayersNotReady = players.find(p => p.startReady === false);
+                if (allPlayersNotReady === undefined) {
                     if (gameOver) {
                         return;
                     }
                     setPlayersGameReady(true);
-                    dispatch(initLandingTokens());
+                    if (!user) {
+                        return;
+                    }
+                    const currentPlayer = players.find(p => p.uuid === user.uuid);
+                    if (currentPlayer.host === true) {
+                        const getLandingTokens = async () => {
+                            try {
+                                const tokens = await landingTokenService.getAllLandingTokens();
+                                socket.emit('addTokens', tokens);
+                            } catch (e) {
+                                console.log('error', e);
+                                dispatch(setAlert('Tokeneita ei pystytty hakemaan DB:stä =('));
+                            }
+                        };
+                        getLandingTokens();
+                    }
                 }
             }
         }
     // eslint-disable-next-line
     }, [players]);
 
-    // Julistaa voittajan ja näyttää voitto-ikkunan sekä muuttaa tämän jälkeen pelaajan winner statuksen falseksi
+    // Julistaa voittajan ja näyttää voitto-ikkunan
     useEffect(() => {
         const thereIsWinner = players.find(p => p.winner === true);
         if (thereIsWinner) {
@@ -153,7 +143,7 @@ const App = ({ updater }) => {
     return (
         <div>
             {!user && <LoginPage />}
-            {user && !playersLobbyReady && !gameOver && <Lobby />}
+            {user && !playersLobbyReady && !gameOver && <Lobby gameOver={gameOver} />}
             {user && playersLobbyReady &&
             <div>
                 <Centered>

@@ -1,28 +1,22 @@
 import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Button, Container, Typography, Paper } from '@material-ui/core';
 import DoneIcon from '@material-ui/icons/Done';
 import { useSelector, useDispatch } from 'react-redux';
 import { logoutUser } from '../reducers/userReducer';
 import { setAlert } from '../reducers/alertReducer';
-import playersService from '../services/playersService';
 import { socket } from '../index';
 
-const Lobby = () => {
+const Lobby = ({ gameOver }) => {
     const dispatch = useDispatch();
     const user = useSelector(state => state.user);
     const players = useSelector(state => state.players);
 
     useEffect(() => {
-        const makePlayerHost = async (player) => {
-            try {
-                player.host = true;
-                const editedPlayer = await playersService.editPlayer(player);
-                socket.emit('playerToEdit', editedPlayer);
-            } catch (e) {
-                console.log('error', e);
-                dispatch(setAlert('Pelaajaa ei voitu asettaa hostiksi =('));
-            }
+        const makePlayerHost = (player) => {
+            player.host = true;
+            socket.emit('playerToEdit', player);
         };
         if (players.length !== 0) {
             const onePlayerIsHost = players.find(p => p.host === true);
@@ -31,37 +25,30 @@ const Lobby = () => {
             }
         }
     // eslint-disable-next-line
-    }, [players]);
+    }, [players, gameOver]);
 
-    const handleLogout = async () => {
-        try {
-            const player = players.find(p => p.uuid === user.uuid);
-            await playersService.removeOnePlayer(player);
-            socket.emit('removePlayer', player);
-            dispatch(logoutUser());
-        } catch (e) {
-            console.log('error', e);
-        }
+    const player = players.find(p => p.uuid === user.uuid);
+    if (!player) {
+        return null;
+    }
+
+    const handleLogout = () => {
+        socket.emit('removePlayer', player);
+        dispatch(logoutUser());
     };
 
-    const handleColorPick = async (color) => {
+    const handleColorPick = (color) => {
         const colorNotAvailable = players.find(p => p.color === color);
         if (colorNotAvailable) {
             dispatch(setAlert('Tämä väri on jo valittu'));
             return;
         }
-        try {
-            const player = players.find(p => p.uuid === user.uuid);
-            if (player.lobbyReady === true) {
-                dispatch(setAlert('Olet jo merkannut itsesi valmiiksi, et voi vaihtaa enää väriä'));
-                return;
-            }
-            player.color = color;
-            const editedPlayer = await playersService.editPlayer(player);
-            socket.emit('playerToEdit', editedPlayer);
-        } catch (e) {
-            dispatch(setAlert('Jokin meni pieleen =('));
+        if (player.lobbyReady === true) {
+            dispatch(setAlert('Olet jo merkannut itsesi valmiiksi, et voi vaihtaa enää väriä'));
+            return;
         }
+        player.color = color;
+        socket.emit('playerToEdit', player);
     };
 
     const markSelection = (color) => {
@@ -85,29 +72,13 @@ const Lobby = () => {
         return {display: ready ? '' : 'none'};
     };
 
-    const handlePlayerReady = async () => {
-        try {
-            const playerToBeReady = players.find(p => p.uuid === user.uuid);
-            if (playerToBeReady.color === 'white' || playerToBeReady.color === '') {
-                dispatch(setAlert('Valitsithan värin?'));
-                return;
-            }
-            playerToBeReady.lobbyReady = !playerToBeReady.lobbyReady;
-            const playerIsLobbyReady = await playersService.editPlayer(playerToBeReady);
-            socket.emit('playerToEdit', playerIsLobbyReady);
-        } catch (e) {
-            console.log('error', e);
-            dispatch(setAlert('Jokin meni lobbyssa pieleen =('));
+    const handlePlayerReady = () => {
+        if (player.color === 'white' || player.color === '') {
+            dispatch(setAlert('Valitsithan värin?'));
+            return;
         }
-    };
-
-    const buttonCheckIfReady = () => {
-        const player = players.find(p => p.uuid === user.uuid);
-        if (player) {
-            return player.lobbyReady;
-        } else {
-            return false;
-        }
+        player.lobbyReady = !player.lobbyReady;
+        socket.emit('playerToEdit', player);
     };
 
     return (
@@ -128,24 +99,24 @@ const Lobby = () => {
                         <PlayerName>{playerName('#7fffd4')}</PlayerName>
                     </ColorNameContainer>
                     <ColorNameContainer>
-                        <PlayerColor className={markSelection('#bd1414')} onClick={() => handleColorPick('#bd1414')} style={{backgroundColor: '#bd1414'}} />
-                        <PlayerName>{playerName('#bd1414')}</PlayerName>
+                        <PlayerColor className={markSelection('#ec1c24')} onClick={() => handleColorPick('#ec1c24')} style={{backgroundColor: '#ec1c24'}} />
+                        <PlayerName>{playerName('#ec1c24')}</PlayerName>
                     </ColorNameContainer>
                     <ColorNameContainer>
-                        <PlayerColor className={markSelection('#a748c3')} onClick={() => handleColorPick('#a748c3')} style={{backgroundColor: '#a748c3'}} />
-                        <PlayerName>{playerName('#a748c3')}</PlayerName>
+                        <PlayerColor className={markSelection('#f900fd')} onClick={() => handleColorPick('#f900fd')} style={{backgroundColor: '#f900fd'}} />
+                        <PlayerName>{playerName('#f900fd')}</PlayerName>
                     </ColorNameContainer>
                     <ColorNameContainer>
-                        <PlayerColor className={markSelection('#268b07')} onClick={() => handleColorPick('#268b07')} style={{backgroundColor: '#268b07'}} />
-                        <PlayerName>{playerName('#268b07')}</PlayerName>
+                        <PlayerColor className={markSelection('#0ed145')} onClick={() => handleColorPick('#0ed145')} style={{backgroundColor: '#0ed145'}} />
+                        <PlayerName>{playerName('#0ed145')}</PlayerName>
                     </ColorNameContainer>
                     <ColorNameContainer>
-                        <PlayerColor className={markSelection('#bc752b')} onClick={() => handleColorPick('#bc752b')} style={{backgroundColor: '#bc752b'}} />
-                        <PlayerName>{playerName('#bc752b')}</PlayerName>
+                        <PlayerColor className={markSelection('#e4e4e4')} onClick={() => handleColorPick('#e4e4e4')} style={{backgroundColor: '#e4e4e4'}} />
+                        <PlayerName>{playerName('#e4e4e4')}</PlayerName>
                     </ColorNameContainer>
                     <ColorNameContainer>
-                        <PlayerColor className={markSelection('#e6e600')} onClick={() => handleColorPick('#e6e600')} style={{backgroundColor: '#e6e600'}} />
-                        <PlayerName>{playerName('#e6e600')}</PlayerName>
+                        <PlayerColor className={markSelection('#fff200')} onClick={() => handleColorPick('#fff200')} style={{backgroundColor: '#fff200'}} />
+                        <PlayerName>{playerName('#fff200')}</PlayerName>
                     </ColorNameContainer>
                 </ColorPicker>
             </div>
@@ -155,7 +126,7 @@ const Lobby = () => {
                 </Typography>
                 <Paper style={{padding: '1rem'}} elevation={3}>
                     {players.map(player =>
-                        <Typography style={{display: 'flex', alignItems: 'center'}} key={player.id}>
+                        <Typography style={{display: 'flex', alignItems: 'center'}} key={player.uuid}>
                             <span style={playerNameColor(player.color)}>{player.name}</span>
                             <span style={showReadyIcon(player.lobbyReady)}><DoneIcon /></span>
                         </Typography>    
@@ -168,7 +139,7 @@ const Lobby = () => {
                     color='primary'
                     onClick={handlePlayerReady}
                 >
-                    {buttonCheckIfReady()
+                    {player.lobbyReady
                         ? 'En olekaan valmis'
                         : 'Valmis'
                     }
@@ -211,5 +182,9 @@ const PlayerName = styled.span`
     width: 100%;
     text-align: center;
 `;
+
+Lobby.propTypes = {
+    gameOver: PropTypes.bool.isRequired
+};
 
 export default Lobby;

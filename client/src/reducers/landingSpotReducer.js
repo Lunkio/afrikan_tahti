@@ -7,6 +7,8 @@ const landingSpotReducer = (state = [], action) => {
     case 'REVEAL_LANDINGSPOT':
         action.data.revealed = true;
         return state.map(s => s.id !== action.data.id ? s : action.data);
+    case 'HIDE_LANDINGSPOTS':
+        return action.data;
     default: return state;
     }
 };
@@ -26,6 +28,16 @@ export const revealLandingSpot = (spot) => {
     return {
         type: 'REVEAL_LANDINGSPOT',
         data: spot
+    };
+};
+
+export const hideLandingSpots = (spots) => {
+    return dispatch => {
+        spots.forEach(spot => spot.revealed = false);
+        dispatch({
+            type: 'HIDE_LANDINGSPOTS',
+            data: spots
+        });
     };
 };
 

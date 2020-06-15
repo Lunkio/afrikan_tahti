@@ -4,59 +4,53 @@ import { useDispatch } from 'react-redux';
 import { newUser } from '../reducers/userReducer';
 import { setAlert } from '../reducers/alertReducer';
 import { v4 as uuid } from 'uuid';
-import playersService from '../services/playersService';
 import { socket } from '../index';
 
 const LoginPage = () => {
     const dispatch = useDispatch();
     const [playername, setPlayername] = useState('');
 
-    const handleNewPlayer = async (event) => {
+    const handleNewPlayer = (event) => {
         event.preventDefault();
-        try {
-            if (playername === '') {
-                dispatch(setAlert('Syötä nimi'));
-                return;
-            }
-            const id = uuid();
-            const user = {
-                name: playername,
-                uuid: id
-            };
-            const player = {
-                name: playername,
-                host: false,
-                lobbyReady: false,
-                startReady: false,
-                stepControl: 0,
-                flightControl: 0,
-                coordX: 0,
-                coordY: 0,
-                turnOrder: Math.ceil(Math.random() * 10000000),
-                canPlay: false,
-                hasMoved: false,
-                stepsRemain: 0,
-                hasFlown: false,
-                flightTicket: false,
-                boatTicket: false,
-                freeBoatTicket: false,
-                money: 300,
-                hasWatchedTreasure: false,
-                hasGambled: false,
-                hasStar: false,
-                hasShoe: false,
-                firstInCapeTown: false,
-                firstInGoldCoast: false,
-                winner: false,
-                uuid: id,
-            };
-            dispatch(newUser(user));
-            const newPlayer = await playersService.addNewPlayer(player);
-            socket.emit('addPlayer', newPlayer);
-        } catch (e) {
-            console.log('error', e);
-            dispatch(setAlert('Jokin meni pieleen =('));
+        if (playername === '') {
+            dispatch(setAlert('Syötä nimi'));
+            return;
         }
+        const id = uuid();
+        const user = {
+            name: playername,
+            uuid: id
+        };
+        const newPlayer = {
+            name: playername,
+            color: '',
+            host: false,
+            lobbyReady: false,
+            startReady: false,
+            stepControl: 0,
+            flightControl: 0,
+            coordX: 0,
+            coordY: 0,
+            turnOrder: Math.ceil(Math.random() * 10000000),
+            canPlay: false,
+            hasMoved: false,
+            stepsRemain: 0,
+            hasFlown: false,
+            flightTicket: false,
+            boatTicket: false,
+            freeBoatTicket: false,
+            money: 300,
+            hasWatchedTreasure: false,
+            hasGambled: false,
+            hasStar: false,
+            hasShoe: false,
+            firstInCapeTown: false,
+            firstInGoldCoast: false,
+            winner: false,
+            uuid: id,
+        };
+        socket.emit('addPlayer', newPlayer);
+        dispatch(newUser(user));
     };
 
     return (
