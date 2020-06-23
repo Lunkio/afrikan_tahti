@@ -13,10 +13,11 @@ const landingSpotReducer = (state = [], action) => {
     }
 };
 
-export const initLandingSpots = () => {
+export const initLandingSpots = (lobby) => {
     return async dispatch => {
         const spots = await mapSpotsService.getLandingSpots();
         spots.forEach(spot => spot.revealed = false);
+        spots.forEach(spot => spot.lobbyId = lobby.id);
         dispatch({
             type: 'INIT_LANDINGSPOTS',
             data: spots
@@ -34,6 +35,7 @@ export const revealLandingSpot = (spot) => {
 export const hideLandingSpots = (spots) => {
     return dispatch => {
         spots.forEach(spot => spot.revealed = false);
+        spots.forEach(spot => spot.lobbyId = null);
         dispatch({
             type: 'HIDE_LANDINGSPOTS',
             data: spots

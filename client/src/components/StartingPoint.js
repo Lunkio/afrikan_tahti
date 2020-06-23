@@ -1,13 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import { socket } from '../index';
+import { gameSocket } from '../index';
 import { setAlert } from '../reducers/alertReducer';
 import { movePawn, flyPawn } from './Pawn';
 
 const StartingPoint = () => {
     const dispatch = useDispatch();
-    const players = useSelector(state => state.players);
+    const inGamePlayers = useSelector(state => state.inGamePlayers);
     const user = useSelector(state => state.user);
     const startPoints = useSelector(state => state.startPoints);
 
@@ -15,13 +15,13 @@ const StartingPoint = () => {
         if (player.stepControl >= 1001 && player.stepControl <= 1012) {
             if (player.hasStar || player.hasShoe) {
                 player.winner = true;
-                socket.emit('playerToEdit', player);
+                gameSocket.emit('inGamePlayerToEdit', player);
             }
         }
     };
 
     const movePlayer = (spot) => {
-        const player = players.find(p => p.canPlay === true);
+        const player = inGamePlayers.find(p => p.canPlay === true);
         if (!player) {
             return;
         }
@@ -57,11 +57,11 @@ const StartingPoint = () => {
     };
 
     const setStartLocation = (point) => {
-        if (players.find(p => p.stepControl === point.stepControl)) {
+        if (inGamePlayers.find(p => p.stepControl === point.stepControl)) {
             dispatch(setAlert('Aloituspaikka jo valittu'));
             return;
         }
-        const player = players.find(p => p.uuid === user.uuid);
+        const player = inGamePlayers.find(p => p.uuid === user.uuid);
         if (player.canPlay) {
             movePlayer(point);
             return;
@@ -73,7 +73,7 @@ const StartingPoint = () => {
         player.flightControl = point.flightControl;
         player.coordX = point.coordX;
         player.coordY = point.coordY;
-        socket.emit('playerToEdit', player);
+        gameSocket.emit('inGamePlayerToEdit', player);
     };
 
     return (

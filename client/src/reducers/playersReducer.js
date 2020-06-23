@@ -1,5 +1,7 @@
+import { removePlayerFromLobby } from '../gameUtils';
+
 const playersReducer = (state = [], action) => {
-    switch(action.type) {
+    switch (action.type) {
     case 'INIT_PLAYERS':
         return action.data;
     case 'NEW_PLAYER':
@@ -10,6 +12,8 @@ const playersReducer = (state = [], action) => {
         return state.filter(player => player.uuid !== action.data);
     case 'REMOVE_ALL_PLAYERS':
         return [];
+    case 'SYNC_PLAYERS':
+        return action.data;
     default: return state;
     }
 };
@@ -21,10 +25,10 @@ export const initPlayers = (players) => {
     };
 };
 
-export const newPlayer = (newPlayer) => {
+export const newPlayer = (player) => {
     return {
         type: 'NEW_PLAYER',
-        data: newPlayer
+        data: player
     };
 };
 
@@ -36,15 +40,36 @@ export const editPlayerDetails = (player) => {
 };
 
 export const removePlayer = (player) => {
-    return {
-        type: 'REMOVE_PLAYER',
-        data: player.uuid
+    return async dispatch => {
+        await removePlayerFromLobby(player);
+        dispatch({
+            type: 'REMOVE_PLAYER',
+            data: player.uuid
+        });
     };
 };
 
 export const removeAllPlayersFromState = () => {
     return {
         type: 'REMOVE_ALL_PLAYERS'
+    };
+};
+
+export const syncPlayers = (players, lobby) => {
+    return dispatch => {
+        const filterPlayersByLobby = players.filter(p => p.lobbyuuid === lobby.uuid);
+        const ids = [filterPlayersByLobby[0].uuid];
+        const lobbyPlayers = [filterPlayersByLobby[0]];
+        for (let i = 1; i < filterPlayersByLobby.length; i++) {
+            if (ids.indexOf(filterPlayersByLobby[i].uuid) === -1) {
+                ids.push(filterPlayersByLobby[i].uuid);
+                lobbyPlayers.push(filterPlayersByLobby[i]);
+            }
+        }
+        dispatch({
+            type: 'SYNC_PLAYERS',
+            data: lobbyPlayers
+        });
     };
 };
 

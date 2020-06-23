@@ -1,3 +1,6 @@
+import lobbyService from './services/lobbyService';
+import { lobbySocket } from './index';
+
 let tokens = [
     { type: 'tahti', moneyValue: 0 },
     { type: 'punainen', moneyValue: 1000 },
@@ -32,3 +35,18 @@ let tokens = [
 ];
 
 export default tokens;
+
+export const removePlayerFromLobby = async (player) => {
+    try {
+        const lobbies = await lobbyService.getAllLobbies();
+        const lobbyToRemovePlayer = lobbies.find(lobby => lobby.playersInLobby.find(p => p.uuid === player.uuid));
+        if (lobbyToRemovePlayer) {
+            const playerRemoved = lobbyToRemovePlayer.playersInLobby.filter(p => p.uuid !== player.uuid);
+            lobbyToRemovePlayer.playersInLobby = playerRemoved;
+            const updatedLobby = await lobbyService.editLobby(lobbyToRemovePlayer);
+            lobbySocket.emit('lobbyToEdit', updatedLobby);
+        }
+    } catch (e) {
+        console.log('error', e);
+    }
+};

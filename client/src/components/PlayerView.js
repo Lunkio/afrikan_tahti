@@ -7,25 +7,24 @@ import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { setAlert } from '../reducers/alertReducer';
 import { logoutUser } from '../reducers/userReducer';
-import { removeAllPlayersFromState } from '../reducers/playersReducer';
-import { socket } from '../index';
+import { gameSocket } from '../index';
 
 const PlayerView = () => {
     const dispatch = useDispatch();
     const user = useSelector(state => state.user);
-    const players = useSelector(state => state.players);
+    const inGamePlayers = useSelector(state => state.inGamePlayers);
     const landingSpots = useSelector(state => state.landingSpots);
     const landingTokens = useSelector(state => state.landingTokens);
     const starIsFound = useSelector(state => state.starIsFound);
 
     const handleLogout = () => {
         dispatch(logoutUser());
-        dispatch(removeAllPlayersFromState());
+        //socket.emit('removePlayer', player);
     };
 
     // tarkistaa Afrikan tähden löytäjän ja ilmoittaa siitä kunnes pelaaja löytää hevosenkengän
     useEffect(() => {
-        const playerWithStar = players.find(p => p.hasStar === true);
+        const playerWithStar = inGamePlayers.find(p => p.hasStar === true);
         if (playerWithStar) {
             if (user.uuid !== playerWithStar.uuid) {
                 dispatch(setAlert(`${playerWithStar.name} on löytänyt Afrikan Tähden! Löydä hevosenkenkä pian!`));
@@ -34,14 +33,14 @@ const PlayerView = () => {
     // eslint-disable-next-line
     }, [starIsFound]);
 
-    const player = players.find(p => p.uuid === user.uuid);
+    const player = inGamePlayers.find(p => p.uuid === user.uuid);
     if (!player) {
         return null;
     }
 
     const checkIfGoldCoastIsJewel = (player) => {
         if (player.stepControl === 507) {
-            if (!(players.find(p => p.firstInGoldCoast === true))) {
+            if (!(inGamePlayers.find(p => p.firstInGoldCoast === true))) {
                 player.firstInGoldCoast = true;
                 const landingSpot = landingSpots.find(s => s.stepControl === player.stepControl);
                 const landingToken = landingTokens.find(t => t.landingSpotId === landingSpot.id);
@@ -51,7 +50,7 @@ const PlayerView = () => {
     };
 
     const checkLandingTokenType = (landingToken, player) => {
-        const playerHasStar = players.find(p => p.hasStar === true);
+        const playerHasStar = inGamePlayers.find(p => p.hasStar === true);
         switch (landingToken.type) {
         case 'tyhja':
             break;
@@ -72,6 +71,7 @@ const PlayerView = () => {
             break;
         case 'tahti':
             player.hasStar = true;
+            gameSocket.emit('starIsFound', player);
             dispatch(setAlert('Löysit Afrikan tähden! Vie se takaisin Kairoon tai Tangeriin'));
             break;
         case 'kenka':
@@ -121,11 +121,11 @@ const PlayerView = () => {
             player.hasWatchedTreasure = true;
             player.money = player.money -100;
             checkLandingTokenType(landingToken, player);
-            socket.emit('playerToEdit', player);
-            socket.emit('revealLandingSpot', landingSpot);
-            if (player.hasStar) {
-                socket.emit('starIsFound');
-            }
+            gameSocket.emit('inGamePlayerToEdit', player);
+            gameSocket.emit('revealLandingSpot', landingSpot);
+            // if (player.hasStar) {
+            //     gameSocket.emit('starIsFound');
+            // }
         }
     };
 
@@ -143,12 +143,12 @@ const PlayerView = () => {
             if (Math.random() > 0.5) {
                 player.hasWatchedTreasure = true;
                 checkLandingTokenType(landingToken, player);
-                socket.emit('revealLandingSpot', landingSpot);
+                gameSocket.emit('revealLandingSpot', landingSpot);
             } else {
                 dispatch(setAlert('Aarre ei löytynyt tällä kertaa =('));
             }
             player.hasGambled = true;
-            socket.emit('playerToEdit', player);
+            gameSocket.emit('inGamePlayerToEdit', player);
         }
     };
 
@@ -173,7 +173,7 @@ const PlayerView = () => {
                 </div>
                 <div>
                     <Button color='secondary' variant='outlined' onClick={handleLogout}>
-                        DeleteAll
+                        Poistu
                     </Button>
                 </div>
             </PlayerHeader>

@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { newUser } from '../reducers/userReducer';
 import { setAlert } from '../reducers/alertReducer';
 import { v4 as uuid } from 'uuid';
-import { socket } from '../index';
+import { lobbySocket } from '../index';
 
 const LoginPage = () => {
     const dispatch = useDispatch();
@@ -24,7 +24,10 @@ const LoginPage = () => {
         const newPlayer = {
             name: playername,
             color: '',
+            inLobby: false,
+            lobbyuuid: '',
             host: false,
+            lobbyCreator: false,
             lobbyReady: false,
             startReady: false,
             stepControl: 0,
@@ -39,7 +42,7 @@ const LoginPage = () => {
             flightTicket: false,
             boatTicket: false,
             freeBoatTicket: false,
-            money: 300,
+            money: 3000,
             hasWatchedTreasure: false,
             hasGambled: false,
             hasStar: false,
@@ -49,7 +52,7 @@ const LoginPage = () => {
             winner: false,
             uuid: id,
         };
-        socket.emit('addPlayer', newPlayer);
+        lobbySocket.emit('addPlayer', newPlayer);
         dispatch(newUser(user));
     };
 

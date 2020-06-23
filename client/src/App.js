@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { socket } from './index';
 import { useSelector, useDispatch } from 'react-redux';
 import { initUser } from './reducers/userReducer';
-import { newPlayer, editPlayerDetails, removePlayer } from './reducers/playersReducer';
 import { setAlert } from './reducers/alertReducer';
-import { initLandingSpots, revealLandingSpot } from './reducers/landingSpotReducer';
-import { initLandingTokens } from './reducers/landingTokenReducer';
+import { initLandingSpots } from './reducers/landingSpotReducer';
 import { initStartPoints } from './reducers/startPointReducer';
 import { initLandRoutes } from './reducers/landRouteReducer';
 import { initSeaRoutes } from './reducers/seaRouteReducer';
-import { foundStar } from './reducers/starIsFoundReducer';
-import landingTokenService from './services/landingTokenService';
+import { initLobbies } from './reducers/lobbyReducer';
+import { initInGamePlayers } from './reducers/inGamePlayersReducer';
+import { removeAllPlayersFromState } from './reducers/playersReducer';
 import AlertMessage from './components/AlertMessage';
 import Kartta from './components/Kartta';
 import LandingSpot from './components/LandingSpot';
@@ -21,29 +19,36 @@ import SeaRoute from './components/SeaRoute';
 import StartingPoint from './components/StartingPoint';
 import LoginPage from './components/LoginPage';
 import PlayerView from './components/PlayerView';
+import LobbyManager from './components/LobbyManager';
 import Lobby from './components/Lobby';
 import Pawn from './components/Pawn';
 import OtherPlayers from './components/OtherPlayers';
 import StartingPhase from './components/GamePhases/StartingPhase';
 import GamingPhase from './components/GamePhases/GamingPhase';
 import GameOver from './components/GamePhases/GameOver';
+import SocketsLobby from './SocketsLobby';
+import SocketsGame from './SocketsGame';
 
 const App = ({ updater }) => {
     const dispatch = useDispatch();
     const user = useSelector(state => state.user);
     const players = useSelector(state => state.players);
-    const [playersLobbyReady, setPlayersLobbyReady] = useState(false);
-    const [playersGameReady, setPlayersGameReady] = useState(false);
+    const lobbies = useSelector(state => state.lobbies);
+    const [thisLobby, setThisLobby] = useState({});
+    const [playerInLobby, setPlayerInLobby] = useState(false);
+    const [playerLobbyReady, setPlayerLobbyReady] = useState(false);
+    const [playerGameReady, setPlayerGameReady] = useState(false);
     const [gameOver, setGameOver] = useState(false);
 
     // Hakee spotit db:stä
     useEffect(() => {
         const fetch = async () => {
             try {
-                await dispatch(initLandingSpots());
+                //await dispatch(initLandingSpots());
                 await dispatch(initStartPoints());
                 await dispatch(initLandRoutes());
                 await dispatch(initSeaRoutes());
+                await dispatch(initLobbies());
                 dispatch(initUser());
             } catch (e) {
                 console.log('error', e);
@@ -55,120 +60,113 @@ const App = ({ updater }) => {
     }, [updater]);
 
     // kuuntelee serveriä
+    // useEffect(() => {
+    //     socket.on('lobbyAdded', (lobby) => {
+    //         dispatch(addNewLobby(lobby));
+    //     });
+
+    //     socket.on('lobbyRemoved', (lobby) => {
+    //         dispatch(removeLobby(lobby));
+    //     });
+
+    //     socket.on('editedLobby', (lobby) => {
+    //         dispatch(editLobbyDetails(lobby));
+    //     });
+
+    //     socket.on('playerJoined', (player) => {
+    //         dispatch(newPlayer(player));
+    //     });
+
+    //     socket.on('playerRemoved', (player) => {
+    //         dispatch(removePlayer(player));
+    //     });
+
+    //     socket.on('editedPlayer', (player) => {
+    //         dispatch(editPlayerDetails(player));
+    //     });
+
+    //     socket.on('landingSpotRevealed', (spot) => {
+    //         dispatch(revealLandingSpot(spot));
+    //     });
+
+    //     socket.on('starFound', () => {
+    //         dispatch(foundStar());
+    //     });
+
+    //     socket.on('tokensAdded', (tokens, thisLobby) => {
+    //         dispatch(initLandingTokens(tokens));
+    //     });
+    // // eslint-disable-next-line
+    // }, []);
+
+    // Asettaa pelinäkymän kun pelaajat valmiina lobbyssa, asettaa lobbyn pelaajat uuteen stateen ja antaa thisLobbyn socketille
     useEffect(() => {
-        socket.on('tokensAdded', (tokens) => {
-            dispatch(initLandingTokens(tokens));
-        });
-
-        socket.on('playerJoined', (player) => {
-            dispatch(newPlayer(player));
-        });
-
-        socket.on('playerRemoved', (player) => {
-            dispatch(removePlayer(player));
-        });
-
-        socket.on('editedPlayer', (player) => {
-            dispatch(editPlayerDetails(player));
-        });
-
-        socket.on('landingSpotRevealed', (spot) => {
-            dispatch(revealLandingSpot(spot));
-        });
-
-        socket.on('starFound', () => {
-            dispatch(foundStar());
-        });
-    // eslint-disable-next-line
-    }, []);
-
-    // Menee pelinäkymään kun pelaajat valmiina lobbyssa
-    useEffect(() => {
-        if (!playersLobbyReady) {
-            if (players.length === 0) {
-                setPlayersLobbyReady(false);
-            } else {
-                const allPlayersNotReady = players.find(p => p.lobbyReady === false);
-                if (allPlayersNotReady === undefined) {
-                    setPlayersLobbyReady(true);
-                }
-            }
-        }
-    // eslint-disable-next-line
-    }, [players]);
-
-    // Asettaa landingTokenit kartalle ja aloittaa pelin kun pelaajat pelivalmiita, host tuo tokenit muille pelaajille
-    useEffect(() => {
-        if (!playersGameReady) {
-            if (players.length === 0) {
-                setPlayersGameReady(false);
-            } else {
-                const allPlayersNotReady = players.find(p => p.startReady === false);
-                if (allPlayersNotReady === undefined) {
-                    if (gameOver) {
-                        return;
-                    }
-                    setPlayersGameReady(true);
-                    if (!user) {
-                        return;
-                    }
-                    const currentPlayer = players.find(p => p.uuid === user.uuid);
-                    if (currentPlayer.host === true) {
-                        const getLandingTokens = async () => {
-                            try {
-                                const tokens = await landingTokenService.getAllLandingTokens();
-                                socket.emit('addTokens', tokens);
-                            } catch (e) {
-                                console.log('error', e);
-                                dispatch(setAlert('Tokeneita ei pystytty hakemaan DB:stä =('));
-                            }
-                        };
-                        getLandingTokens();
+        if (!playerLobbyReady) {
+            if (players.length !== 0 && user) {
+                const player = players.find(p => p.uuid === user.uuid);
+                if (player) {
+                    const lobby = lobbies.find(l => l.uuid === player.lobbyuuid);
+                    if (lobby) {
+                        if (lobby.inGame) {
+                            setThisLobby(lobby);
+                            dispatch(removeAllPlayersFromState());
+                            dispatch(initInGamePlayers(lobby.playersInLobby));
+                            dispatch(initLandingSpots(lobby));
+                            // alla oleva unmountaa SocketsLobby -komponentin
+                            setPlayerLobbyReady(true);
+                        }
                     }
                 }
             }
         }
     // eslint-disable-next-line
-    }, [players]);
+    }, [lobbies]);
 
     // Julistaa voittajan ja näyttää voitto-ikkunan
-    useEffect(() => {
-        const thereIsWinner = players.find(p => p.winner === true);
-        if (thereIsWinner) {
-            setGameOver(true);
-        }
-    // eslint-disable-next-line
-    }, [players]);
+    // useEffect(() => {
+    //     const thereIsWinner = players.find(p => p.winner === true);
+    //     if (thereIsWinner) {
+    //         setGameOver(true);
+    //     }
+    // // eslint-disable-next-line
+    // }, [players]);
 
     return (
-        <div>
+        <React.Fragment>
             {!user && <LoginPage />}
-            {user && !playersLobbyReady && !gameOver && <Lobby gameOver={gameOver} />}
-            {user && playersLobbyReady &&
-            <div>
-                <Centered>
-                    <PlayArena>
-                        <div>
-                            <Kartta />
-                            <LandingSpot />
-                            <LandRoute />
-                            <SeaRoute />
-                            <StartingPoint />
-                        </div>
-                        <PlayerSection>
-                            {!playersGameReady && <StartingPhase />}
-                            {playersGameReady && <GamingPhase />}
-                            <PlayerView />
-                            <OtherPlayers />
-                        </PlayerSection>
-                    </PlayArena>
-                    <Pawn />
-                </Centered>
-            </div>
+            {user && !playerLobbyReady && !gameOver && !playerInLobby && <LobbyManager setPlayerInLobby={setPlayerInLobby} /> }
+            {user && !playerLobbyReady && !gameOver && playerInLobby && <Lobby setPlayerInLobby={setPlayerInLobby} />}
+            {user && playerLobbyReady &&
+            <Centered>
+                <PlayArena>
+                    <div>
+                        <Kartta />
+                        <LandingSpot />
+                        <LandRoute />
+                        <SeaRoute />
+                        <StartingPoint />
+                    </div>
+                    <PlayerSection>
+                        {!playerGameReady && <StartingPhase setPlayerGameReady={setPlayerGameReady} />}
+                        {playerGameReady && <GamingPhase />}
+                        <PlayerView />
+                        <OtherPlayers />
+                    </PlayerSection>
+                </PlayArena>
+                <Pawn />
+            </Centered>
             }
-            {gameOver && <GameOver gameOver={gameOver} setGameOver={setGameOver} setPlayersLobbyReady={setPlayersLobbyReady} setPlayersGameReady={setPlayersGameReady} />}
+            {gameOver && 
+                <GameOver gameOver={gameOver}
+                    setGameOver={setGameOver}
+                    setPlayerInLobby={setPlayerInLobby}
+                    setPlayerLobbyReady={setPlayerLobbyReady}
+                    setPlayerGameReady={setPlayerGameReady}
+                />}
             <AlertMessage />
-        </div>
+            {!playerLobbyReady && <SocketsLobby /> }
+            {playerLobbyReady && <SocketsGame thisLobby={thisLobby} setGameOver={setGameOver} /> }
+        </React.Fragment>
     );
 };
 

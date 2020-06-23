@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -9,10 +9,11 @@ const landingSpotsRouter = require('./routes/landingSpots');
 const startPointsRouter = require('./routes/startPoints');
 const playersRouter = require('./routes/players');
 const landingTokensRouter = require('./routes/landingTokens');
+const lobbiesRouter = require('./routes/lobbies');
 
 let MONGODB_URI = process.env.MONGODB_URI;
 
-mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
     .then(() => { console.log('Connected to MongoDB') })
     .catch((e) => { console.log('Error', e.message) });
 
@@ -27,5 +28,6 @@ app.use('/landingSpots', landingSpotsRouter);
 app.use('/startPoints', startPointsRouter);
 app.use('/players', playersRouter);
 app.use('/landingTokens', landingTokensRouter);
+app.use('/lobbies', lobbiesRouter);
 
 module.exports = app;

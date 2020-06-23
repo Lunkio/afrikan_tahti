@@ -4,11 +4,12 @@ import styled from 'styled-components';
 import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { setAlert } from '../../reducers/alertReducer';
-import { socket } from '../../index';
+import { gameSocket } from '../../index';
 
 const GamingPhase = () => {
     const dispatch = useDispatch();
-    const players = useSelector(state => state.players);
+    //const players = useSelector(state => state.players);
+    const inGamePlayers = useSelector(state => state.inGamePlayers);
     const user = useSelector(state => state.user);
     const landingSpots = useSelector(state => state.landingSpots);
     const startPoints = useSelector(state => state.startPoints);
@@ -18,21 +19,21 @@ const GamingPhase = () => {
     const [confirmEndTurn, setConfirmEndTurn] = useState(false);
     const [stepsRemainInCaseBoatTicketCancel, setStepsRemainInCaseBoatTicketCancel] = useState(0);
     // const [amountOfPlayers, setAmountOfPlayers] = useState(players.length);
-    //console.log('playersamount', players.length);
+    //console.log('inGamePlayers', inGamePlayers);
 
     // asettaa pelaajille (player.turn) arvoksi 0,1,2 jne... Vain kerran
     useEffect(() => {
         const gameTurn = () => {
             let turnNumber = 0;
             let turnAmount = 0;
-            while (turnAmount < players.length) {
-                for (let i = 0; i < players.length; i++) {
-                    if (players[i].turnOrder === turnNumber) {
-                        players[i].turnOrder = turnAmount;
-                        if (players[i].turnOrder === 0) {
-                            players[i].canPlay = true;
+            while (turnAmount < inGamePlayers.length) {
+                for (let i = 0; i < inGamePlayers.length; i++) {
+                    if (inGamePlayers[i].turnOrder === turnNumber) {
+                        inGamePlayers[i].turnOrder = turnAmount;
+                        if (inGamePlayers[i].turnOrder === 0) {
+                            inGamePlayers[i].canPlay = true;
                         }
-                        socket.emit('playerToEdit', players[i]);
+                        gameSocket.emit('inGamePlayerToEdit', inGamePlayers[i]);
                         turnAmount++;
                     }
                 }
@@ -50,19 +51,19 @@ const GamingPhase = () => {
     //     }
     // }, [players]);
 
-    const player = players.find(p => p.uuid === user.uuid);
+    const player = inGamePlayers.find(p => p.uuid === user.uuid);
     if (!player) {
         return null;
     }
 
     const changeTurn = () => {
-        const previousPlayer = players.find(p => p.canPlay === true);
+        const previousPlayer = inGamePlayers.find(p => p.canPlay === true);
         previousPlayer.canPlay = false;
         previousPlayer.flightTicket = false;
         previousPlayer.stepsRemain = 0;
-        let nextPlayer = players.find(p => p.turnOrder === previousPlayer.turnOrder +1);
+        let nextPlayer = inGamePlayers.find(p => p.turnOrder === previousPlayer.turnOrder +1);
         if (!nextPlayer) {
-            nextPlayer = players.find(p => p.turnOrder === 0);
+            nextPlayer = inGamePlayers.find(p => p.turnOrder === 0);
         }
         nextPlayer.canPlay = true;
         nextPlayer.hasWatchedTreasure = false;
@@ -72,8 +73,8 @@ const GamingPhase = () => {
         if (nextPlayer.freeBoatTicket) {
             nextPlayer.stepsRemain = 2;
         }
-        socket.emit('playerToEdit', previousPlayer);
-        socket.emit('playerToEdit', nextPlayer);
+        gameSocket.emit('inGamePlayerToEdit', previousPlayer);
+        gameSocket.emit('inGamePlayerToEdit', nextPlayer);
         setDiceBeenThrown(false);
     };
 
@@ -85,7 +86,7 @@ const GamingPhase = () => {
     };
 
     const getPlayerWhoHasTurn = () => {
-        const player = players.find(p => p.canPlay === true);
+        const player = inGamePlayers.find(p => p.canPlay === true);
         if (!player) {
             return;
         }
@@ -101,7 +102,7 @@ const GamingPhase = () => {
     };
 
     const throwDice = () => {
-        const player = players.find(p => p.canPlay === true);
+        const player = inGamePlayers.find(p => p.canPlay === true);
         if (player) {
             let randomNumber = Math.round(Math.random() * (6 - 1) + 1);
             setDiceValue(randomNumber);
@@ -111,7 +112,7 @@ const GamingPhase = () => {
                 setThrowingDice(false);
             }, 500);
             player.stepsRemain = randomNumber;
-            socket.emit('playerToEdit', player);
+            gameSocket.emit('inGamePlayerToEdit', player);
         }
     };
     const notThrowingDice = { display: throwingDice ? 'none' : '', marginLeft: '1rem' };
@@ -147,7 +148,7 @@ const GamingPhase = () => {
                 return;
             }
             player.flightTicket = !player.flightTicket;
-            socket.emit('playerToEdit', player);
+            gameSocket.emit('inGamePlayerToEdit', player);
         }
     };
 
@@ -194,7 +195,7 @@ const GamingPhase = () => {
                     player.stepsRemain = 2;
                 }
             }
-            socket.emit('playerToEdit', player);
+            gameSocket.emit('inGamePlayerToEdit', player);
         }
     };
 
@@ -242,7 +243,7 @@ const GamingPhase = () => {
                 >
                     {player.boatTicket
                         ? (<span>Peru matka <Icon icon='ship' /></span>)
-                        : (<span>Lippu <Icon icon='ship' /> (100)</span>)
+                        : (<span>Laiva <Icon icon='ship' /> (100)</span>)
                     }
                 </Button>
                 <Button

@@ -3,26 +3,26 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import pahvi from '../images/pahvi.png';
 import { movePawn, flyPawn } from './Pawn';
-import { socket } from '../index';
+import { gameSocket } from '../index';
 
 const LandingSpot = () => {
-    const players = useSelector(state => state.players);
+    const inGamePlayers = useSelector(state => state.inGamePlayers);
     const user = useSelector(state => state.user);
     const landingSpots = useSelector(state => state.landingSpots);
     const landingTokens = useSelector(state => state.landingTokens);
 
     const checkIfFirstInCapeTown = (player) => {
         if (player.stepControl === 526) {
-            if (!(players.find(p => p.firstInCapeTown === true))) {
+            if (!(inGamePlayers.find(p => p.firstInCapeTown === true))) {
                 player.firstInCapeTown = true;
                 player.money = player.money +500;
-                socket.emit('playerToEdit', player);
+                gameSocket.emit('inGamePlayerToEdit', player);
             }
         }
     };
 
     const movePlayer = (spot) => {
-        const player = players.find(p => p.canPlay === true);
+        const player = inGamePlayers.find(p => p.canPlay === true);
         if (!player) {
             return;
         }

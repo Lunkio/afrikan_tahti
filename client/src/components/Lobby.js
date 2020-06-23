@@ -1,63 +1,142 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import LobbyManager from './LobbyManager';
 import { Button, Container, Typography, Paper } from '@material-ui/core';
 import DoneIcon from '@material-ui/icons/Done';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
+import lobbyService from '../services/lobbyService';
 import { useSelector, useDispatch } from 'react-redux';
-import { logoutUser } from '../reducers/userReducer';
 import { setAlert } from '../reducers/alertReducer';
-import { socket } from '../index';
+import { syncPlayers } from '../reducers/playersReducer';
+import { removePlayerFromLobby } from '../gameUtils';
+import { lobbySocket } from '../index';
 
-const Lobby = ({ gameOver }) => {
+const Lobby = ({ setPlayerInLobby }) => {
     const dispatch = useDispatch();
     const user = useSelector(state => state.user);
     const players = useSelector(state => state.players);
+    const lobbies = useSelector(state => state.lobbies);
+    const [thisLobby, setThisLobby] = useState(undefined);
+    const [playersInThisLobby, setPlayersInThisLobby] = useState([players.find(p => p.uuid === user.uuid)]);
 
+    const updateLobbyAndPlayer = async (player) => {
+        try {
+            const playerToEdit = thisLobby.playersInLobby.find(p => p.uuid === player.uuid);
+            playerToEdit.color = player.color;
+            playerToEdit.lobbyReady = player.lobbyReady;
+            const updatedPlayers = thisLobby.playersInLobby.map(p => p.uuid !== playerToEdit.uuid ? p : playerToEdit);
+            thisLobby.playersInLobby = updatedPlayers;
+            const updatedLobby = await lobbyService.editLobby(thisLobby);
+            lobbySocket.emit('lobbyToEdit', updatedLobby);
+            lobbySocket.emit('playerToEdit', player);
+        } catch (e) {
+            console.log('error', e);
+            dispatch(setAlert('Jokin meni pieleen =('));
+        }
+    };
+
+    const makePlayerHost = (player) => {
+        player.host = true;
+        lobbySocket.emit('playerToEdit', player);
+    };
+
+    const unHostPlayer = (player) => {
+        player.host = false;
+        lobbySocket.emit('playerToEdit', player);
+    };
+
+    // asettaa thisLobbyn pelaajan tietojen mukaan
     useEffect(() => {
-        const makePlayerHost = (player) => {
-            player.host = true;
-            socket.emit('playerToEdit', player);
-        };
-        if (players.length !== 0) {
-            const onePlayerIsHost = players.find(p => p.host === true);
-            if (!onePlayerIsHost) {
-                makePlayerHost(players[0]);
-            }
+        setThisLobby(lobbies.find(l => l.uuid === player.lobbyuuid));
+    // eslint-disable-next-line
+    }, [lobbies]);
+
+    // lisää players stateen uuden liittyneen pelaajan, joka on liittynyt lobbyyn playeria(eli tämä, current) myöhemmin ja tekee lobbyCreatorista hostin
+    useEffect(() => {
+        if (thisLobby) {
+            const playersFromThisLobby = thisLobby.playersInLobby.filter(p => p.lobbyuuid === thisLobby.uuid);
+            const allPlayersInThisLobby = [player];
+            playersFromThisLobby.forEach((lobbyPlayer) => {
+                if (player.uuid !== lobbyPlayer.uuid) {
+                    allPlayersInThisLobby.push(lobbyPlayer);
+                }
+            });
+            dispatch(syncPlayers(allPlayersInThisLobby, thisLobby));
+        }
+        const lobbyCreator = playersInThisLobby.find(p => p.lobbyCreator === true);
+        if (lobbyCreator) {
+            makePlayerHost(lobbyCreator);
         }
     // eslint-disable-next-line
-    }, [players, gameOver]);
+    }, [thisLobby]);
+
+    //ÄLÄ MUUTA, seuraa pelaajien muutosta ja filtteröi ne pelaajat näkyviin mitkä kuuluvat thisLobbyyn
+    useEffect(() => {
+        if (thisLobby) {
+            setPlayersInThisLobby(players.filter(p => p.lobbyuuid === thisLobby.uuid));
+        }
+    // eslint-disable-next-line
+    }, [players]);
+
+    // tarkastaa että lobbyssa on yksi host, ei enempää ei vähempää
+    useEffect(() => {
+        if (thisLobby) {
+            const playersFromThisLobby = thisLobby.playersInLobby.filter(p => p.lobbyuuid === thisLobby.uuid);
+            const thereIsHost = playersFromThisLobby.filter(p => p.host === true);
+            if (thereIsHost.length === 0) {
+                makePlayerHost(playersFromThisLobby[0]);
+            }
+            if (thereIsHost.length > 1) {
+                for (let i = 1; i < thereIsHost.length; i++) {
+                    unHostPlayer(thereIsHost[i]);
+                }
+            }
+        }
+    }, [thisLobby]);
 
     const player = players.find(p => p.uuid === user.uuid);
     if (!player) {
         return null;
     }
 
-    const handleLogout = () => {
-        socket.emit('removePlayer', player);
-        dispatch(logoutUser());
+    if (!thisLobby) {
+        return <LobbyManager />;
+    }
+
+    const handleLeaveLobby = () => {
+        player.color = '';
+        player.inLobby = false;
+        player.lobbyReady = false;
+        player.lobbyuuid = '';
+        player.host = false;
+        player.lobbyCreator = false;
+        lobbySocket.emit('playerToEdit', player);
+        removePlayerFromLobby(player);
+        setPlayerInLobby(false);
     };
 
     const handleColorPick = (color) => {
-        const colorNotAvailable = players.find(p => p.color === color);
+        const colorNotAvailable = playersInThisLobby.find(p => p.color === color);
         if (colorNotAvailable) {
             dispatch(setAlert('Tämä väri on jo valittu'));
             return;
         }
         if (player.lobbyReady === true) {
-            dispatch(setAlert('Olet jo merkannut itsesi valmiiksi, et voi vaihtaa enää väriä'));
+            dispatch(setAlert('Olet merkannut itsesi valmiiksi, et voi vaihtaa tällöin väriä'));
             return;
         }
         player.color = color;
-        socket.emit('playerToEdit', player);
+        updateLobbyAndPlayer(player);
     };
 
     const markSelection = (color) => {
-        const result = players.find(p => p.color === color);
+        const result = playersInThisLobby.find(p => p.color === color);
         return result ? 'color-selected' : '';
     };
 
     const playerName = (color) => {
-        const player = players.find(p => p.color === color);
+        const player = playersInThisLobby.find(p => p.color === color);
         return player ? player.name : '';
     };
 
@@ -68,25 +147,49 @@ const Lobby = ({ gameOver }) => {
         return {color: color, marginRight: '1rem', marginBottom: '5px', textShadow: '-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black'};
     };
 
-    const showReadyIcon = (ready) => {
-        return {display: ready ? '' : 'none'};
-    };
-
     const handlePlayerReady = () => {
         if (player.color === 'white' || player.color === '') {
             dispatch(setAlert('Valitsithan värin?'));
             return;
         }
         player.lobbyReady = !player.lobbyReady;
-        socket.emit('playerToEdit', player);
+        updateLobbyAndPlayer(player);
+    };
+
+    const startGame = async () => {
+        try {
+            thisLobby.inGame = true;
+            const updatedLobby = await lobbyService.editLobby(thisLobby);
+            lobbySocket.emit('lobbyToEdit', updatedLobby);
+        } catch (e) {
+            console.log('error', e);
+            dispatch(setAlert('Huoneen pelistatusta ei voitu muuttaa =('));
+        }
+    };
+
+    const allPlayersReady = () => {
+        const allNotReady = playersInThisLobby.find(p => p.lobbyReady === false);
+        if (allNotReady) {
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+    const showReadyIcon = (ready) => {
+        return {display: ready ? '' : 'none'};
+    };
+
+    const showHostIcon = (host) => {
+        return {display: host ? '' : 'none'};
     };
 
     return (
         <Container maxWidth='md' style={{marginTop: '5rem'}}>
             <LobbyHeader>
-                <h1>Lobby</h1>
-                <Button color='secondary' variant='outlined' onClick={handleLogout}>
-                    Poistu
+                <h1>{thisLobby.name}</h1>
+                <Button color='secondary' variant='outlined' onClick={handleLeaveLobby}>
+                    Poistu huoneesta
                 </Button>
             </LobbyHeader>
             
@@ -125,15 +228,16 @@ const Lobby = ({ gameOver }) => {
                     Pelaajat
                 </Typography>
                 <Paper style={{padding: '1rem'}} elevation={3}>
-                    {players.map(player =>
+                    {playersInThisLobby.map(player =>
                         <Typography style={{display: 'flex', alignItems: 'center'}} key={player.uuid}>
                             <span style={playerNameColor(player.color)}>{player.name}</span>
                             <span style={showReadyIcon(player.lobbyReady)}><DoneIcon /></span>
+                            <span style={showHostIcon(player.host)}><StarBorderIcon /></span>
                         </Typography>    
                     )}
                 </Paper>
             </div>
-            <div style={{marginTop: '1rem'}}>
+            <ReadyButtons>
                 <Button 
                     variant='outlined'
                     color='primary'
@@ -144,7 +248,17 @@ const Lobby = ({ gameOver }) => {
                         : 'Valmis'
                     }
                 </Button>
-            </div>
+                {player.host &&
+                    <Button
+                        variant='contained'
+                        color='primary'
+                        onClick={startGame}
+                        disabled={allPlayersReady()}
+                    >
+                        Aloita peli
+                    </Button>
+                }
+            </ReadyButtons>
         </Container>
     );
 };
@@ -183,8 +297,14 @@ const PlayerName = styled.span`
     text-align: center;
 `;
 
+const ReadyButtons = styled.div`
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+`;
+
 Lobby.propTypes = {
-    gameOver: PropTypes.bool.isRequired
+    setPlayerInLobby: PropTypes.func
 };
 
 export default Lobby;

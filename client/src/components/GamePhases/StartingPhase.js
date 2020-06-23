@@ -1,15 +1,87 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button } from '@material-ui/core';
+import landingTokenService from '../../services/landingTokenService';
+//import lobbyService from '../../services/lobbyService';
 import { setAlert } from '../../reducers/alertReducer';
-import { socket } from '../../index';
+import { gameSocket } from '../../index';
 
-const StartingPhase = () => {
+const StartingPhase = ({ setPlayerGameReady }) => {
     const dispatch = useDispatch();
-    const players = useSelector(state => state.players);
+    const inGamePlayers = useSelector(state => state.inGamePlayers);
     const user = useSelector(state => state.user);
+    const lobbies = useSelector(state => state.lobbies);
+    const [thisLobby, setThisLobby] = useState(undefined);
+    const [playersInThisLobby, setPlayersInThisLobby] = useState([]);
+    // console.log('inGamePlayers', inGamePlayers);
+    // console.log('playersInThisLobby', playersInThisLobby);
 
-    const player = players.find(p => p.uuid === user.uuid);
+    const getLandingTokens = async (lobby) => {
+        try {
+            const tokens = await landingTokenService.getAllLandingTokens();
+            gameSocket.emit('addTokens', tokens, lobby);
+        } catch (e) {
+            console.log('error', e);
+            dispatch(setAlert('Tokeneita ei pystytty hakemaan =('));
+        }
+    };
+
+    const makePlayerHost = (player) => {
+        player.host = true;
+        gameSocket.emit('inGamePlayerToEdit', player);
+    };
+
+    // hakee oikean lobbyn
+    useEffect(() => {
+        setThisLobby(lobbies.find(l => l.uuid === player.lobbyuuid));
+    // eslint-disable-next-line
+    }, []);
+
+    useEffect(() => {
+        if (thisLobby) {
+            setPlayersInThisLobby(inGamePlayers.filter(p => p.lobbyuuid === thisLobby.uuid));
+        }
+    // eslint-disable-next-line
+    }, [inGamePlayers]);
+
+    // hakee hostin, jos ei ole niin tekee listan ekasta pelaajasta hostin
+    useEffect(() => {
+        if (playersInThisLobby.length !== 0) {
+            const thereIsHost = playersInThisLobby.find(p => p.host === true);
+            if (!thereIsHost) {
+                makePlayerHost(playersInThisLobby[0]);
+            }
+        }
+    }, [playersInThisLobby]);
+
+    // tarkistaa ovatko kaikki pelaajat valmiita, jos on niin host tuo tokenit
+    useEffect(() => {
+        if (thisLobby && playersInThisLobby.length !== 0) {
+            const allPlayersNotReady = playersInThisLobby.find(p => p.startReady === false);
+            if (allPlayersNotReady === undefined) {
+                if (player.host) {
+                    getLandingTokens(thisLobby);
+                    //editLobby(thisLobby);
+                }
+                setPlayerGameReady(true);
+            }
+        }
+    // eslint-disable-next-line
+    }, [playersInThisLobby]);
+
+    // const editLobby = async (lobby) => {
+    //     try {
+    //         lobby.inGamePlayersReady = true;
+    //         const updatedLobby = await lobbyService.editLobby(lobby);
+    //         socket.emit('lobbyToEdit', updatedLobby);
+    //     } catch (e) {
+    //         console.log('error', e);
+    //         dispatch(setAlert('Jokin meni pieleen =('));
+    //     }
+    // };
+
+    const player = inGamePlayers.find(p => p.uuid === user.uuid);
     if (!player) {
         return null;
     }
@@ -20,7 +92,7 @@ const StartingPhase = () => {
             return;
         }
         player.startReady = !player.startReady;
-        socket.emit('playerToEdit', player);
+        gameSocket.emit('inGamePlayerToEdit', player);
     };
 
     return (
@@ -41,5 +113,8 @@ const StartingPhase = () => {
     );
 };
 
-export default StartingPhase;
+StartingPhase.propTypes = {
+    setPlayerGameReady: PropTypes.func.isRequired
+};
 
+export default StartingPhase;

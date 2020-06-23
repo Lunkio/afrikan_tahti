@@ -7,7 +7,7 @@ import pawnTurq from '../images/pawn_turq.png';
 import pawnRed from '../images/pawn_red.png';
 import pawnWhite from '../images/pawn_white.png';
 import pawnViolet from '../images/pawn_violet.png';
-import { socket } from '../index';
+import { gameSocket } from '../index';
 
 export const movePawn = (spot, player) => {
     player.coordX = spot.coordX;
@@ -24,7 +24,7 @@ export const movePawn = (spot, player) => {
         player.boatTicket = false;
         player.freeBoatTicket = false;
     }
-    socket.emit('playerToEdit', player);
+    gameSocket.emit('inGamePlayerToEdit', player);
 };
 
 export const flyPawn = (spot, player) => {
@@ -37,14 +37,14 @@ export const flyPawn = (spot, player) => {
     player.hasFlown = true;
     player.flightTicket = false;
     player.money = player.money -300;
-    socket.emit('playerToEdit', player);
+    gameSocket.emit('inGamePlayerToEdit', player);
 };
 
 const Pawn = () => {
     const user = useSelector(state => state.user);
-    const players = useSelector(state => state.players);
+    const inGamePlayers = useSelector(state => state.inGamePlayers);
 
-    const currentPlayer = players.find(p => p.uuid === user.uuid);
+    const currentPlayer = inGamePlayers.find(p => p.uuid === user.uuid);
     
     const pawnLocation = (player) => {
         const styleObject = {
@@ -78,7 +78,7 @@ const Pawn = () => {
 
     return (
         <React.Fragment>
-            {players.map(player =>
+            {inGamePlayers.map(player =>
                 <PawnStyle key={player.uuid} style={pawnLocation(player)}>
                     <PawnImage src={pawnColor(player.color)} alt='pawn' />
                 </PawnStyle>

@@ -10,10 +10,6 @@ const userReducer = (state = null, action) => {
 
 export const newUser = (user) => {
     return dispatch => {
-        // eslint-disable-next-line
-        // if (process.env.NODE_ENV === 'development') {
-        //     window.localStorage.setItem('loggedInUser', JSON.stringify(user));
-        // }
         dispatch({
             type: 'NEW_USER',
             data: user

@@ -41,13 +41,20 @@ import io from 'socket.io-client';
 // };
 // canvas.addEventListener('mousedown', onMouseClick);
 
-// eslint-disable-next-line
-export let socket;
+export let lobbySocket;
 // eslint-disable-next-line
 if (process.env.NODE_ENV === 'development') {
-    socket = io(':3001');
+    lobbySocket = io(':3001');
 } else {
-    socket = io('https://afrikan-tahti.herokuapp.com/');
+    lobbySocket = io('https://afrikan-tahti.herokuapp.com/');
+}
+
+export let gameSocket;
+// eslint-disable-next-line
+if (process.env.NODE_ENV === 'development') {
+    gameSocket = io(':3001');
+} else {
+    gameSocket = io('https://afrikan-tahti.herokuapp.com/');
 }
 
 const renderApp = () => {

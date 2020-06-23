@@ -5,78 +5,81 @@ import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeLandingTokens } from '../../reducers/landingTokenReducer';
 import { hideLandingSpots } from '../../reducers/landingSpotReducer';
-import { logoutUser } from '../../reducers/userReducer';
-import { socket } from '../../index';
+import { initLobbies } from '../../reducers/lobbyReducer';
+import { removeAllInGamePlayersFromState } from '../../reducers/inGamePlayersReducer';
+import { removePlayerFromLobby } from '../../gameUtils';
+import { lobbySocket } from '../../index';
 
-const GameOver = ({ gameOver, setGameOver, setPlayersLobbyReady, setPlayersGameReady }) => {
+const GameOver = ({ gameOver, setGameOver, setPlayerInLobby, setPlayerLobbyReady, setPlayerGameReady }) => {
     const dispatch = useDispatch();
     const user = useSelector(state => state.user);
-    const players = useSelector(state => state.players);
+    const inGamePlayers = useSelector(state => state.inGamePlayers);
     const landingSpots = useSelector(state => state.landingSpots);
     const [winnerName, setWinnerName] = useState('');
 
     useEffect(() => {
-        const winner = players.find(p => p.winner === true);
+        const winner = inGamePlayers.find(p => p.winner === true);
         if (winner) {
+            setWinnerName(winner.name);
+            setPlayerLobbyReady(false);
             dispatch(removeLandingTokens());
             dispatch(hideLandingSpots(landingSpots));
-            setWinnerName(winner.name);
-            players.forEach((player) => {
-                player.lobbyReady = false;
-                player.startReady = false;
-                socket.emit('playerToEdit', player);
-            });
-            const unWinPlayer = (player) => {
-                player.winner = false;
-                socket.emit('playerToEdit', player);
-            };
-            unWinPlayer(winner);
         }
     // eslint-disable-next-line
     }, [gameOver]);
 
+    const setDefaultPlayerProperties = (player) => {
+        player.color = '';
+        player.lobbyReady = false;
+        player.startReady = false;
+        player.stepControl = 0;
+        player.flightControl = 0;
+        player.coordX = 0;
+        player.coordY = 0;
+        player.turnOrder = Math.ceil(Math.random() * 10000000);
+        player.canPlay = false;
+        player.hasMoved = false;
+        player.stepsRemain = 0;
+        player.hasFlown = false;
+        player.flightTicket = false;
+        player.boatTicket = false;
+        player.freeBoatTicket = false;
+        player.money = 300;
+        player.hasWatchedTreasure = false;
+        player.hasGambled = false;
+        player.hasStar = false;
+        player.hasShoe = false;
+        player.firstInCapeTown = false;
+        player.firstInGoldCoast = false;
+        player.winner = false;
+    };
+
     const playerWantsNewGame = () => {
-        const player = players.find(p => p.uuid === user.uuid);
+        const player = inGamePlayers.find(p => p.uuid === user.uuid);
         if (player) {
-            player.host = false;
-            player.color = '';
-            player.lobbyReady = false;
-            player.startReady = false;
-            player.stepControl = 0;
-            player.flightControl = 0;
-            player.coordX = 0;
-            player.coordY = 0;
-            player.turnOrder = Math.ceil(Math.random() * 10000000);
-            player.canPlay = false;
-            player.hasMoved = false;
-            player.stepsRemain = 0;
-            player.hasFlown = false;
-            player.flightTicket = false;
-            player.boatTicket = false;
-            player.freeBoatTicket = false;
-            player.money = 300;
-            player.hasWatchedTreasure = false;
-            player.hasGambled = false;
-            player.hasStar = false;
-            player.hasShoe = false;
-            player.firstInCapeTown = false;
-            player.firstInGoldCoast = false;
-            player.winner = false;
-            socket.emit('playerToEdit', player);
+            setDefaultPlayerProperties(player);
+            lobbySocket.emit('playerToEdit', player);
+            dispatch(removeAllInGamePlayersFromState());
             setGameOver(false);
-            setPlayersLobbyReady(false);
-            setPlayersGameReady(false);
+            setPlayerGameReady(false);
         }
     };
 
     const playerWantsToLeave = () => {
-        const player = players.find(p => p.uuid === user.uuid);
+        const player = inGamePlayers.find(p => p.uuid === user.uuid);
         if (player) {
-            socket.emit('removePlayer', player);
-            dispatch(logoutUser());
+            removePlayerFromLobby(player);
+            setDefaultPlayerProperties(player);
+            player.inLobby = false;
+            player.lobbyuuid = '';
+            player.host = false;
+            player.lobbyCreator = false;
+            lobbySocket.emit('playerToEdit', player);
+            dispatch(removeAllInGamePlayersFromState());
             setGameOver(false);
-            setPlayersLobbyReady(false);
-            setPlayersGameReady(false);
+            setPlayerInLobby(false);
+            setPlayerGameReady(false);
+            dispatch(initLobbies());
         }
     };
 
@@ -128,8 +131,9 @@ const CenterButtons = styled.div`
 GameOver.propTypes = {
     gameOver: PropTypes.bool.isRequired,
     setGameOver: PropTypes.func.isRequired,
-    setPlayersLobbyReady: PropTypes.func.isRequired,
-    setPlayersGameReady: PropTypes.func.isRequired
+    setPlayerInLobby: PropTypes.func.isRequired,
+    setPlayerLobbyReady: PropTypes.func.isRequired,
+    setPlayerGameReady: PropTypes.func.isRequired
 };
 
 export default GameOver;

@@ -9,17 +9,21 @@ import startPointReducer from './reducers/startPointReducer';
 import landRouteReducer from './reducers/landRouteReducer';
 import seaRouteReducer from './reducers/seaRouteReducer';
 import starIsFoundReducer from './reducers/starIsFoundReducer';
+import lobbyReducer from './reducers/lobbyReducer';
+import inGamePlayersReducer from './reducers/inGamePlayersReducer';
 
 const reducers = combineReducers({
     user: userReducer,
     alert: alertReducer,
     players: playersReducer,
+    inGamePlayers: inGamePlayersReducer,
     landingTokens: landingTokenReducer,
     landingSpots: landingSpotReducer,
     startPoints: startPointReducer,
     landRoutes: landRouteReducer,
     seaRoutes: seaRouteReducer,
-    starIsFound: starIsFoundReducer
+    starIsFound: starIsFoundReducer,
+    lobbies: lobbyReducer
 });
 
 export const store = createStore(reducers, applyMiddleware(thunk));
