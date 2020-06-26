@@ -20,7 +20,7 @@ io.on('connection', (socket) => {
     });
     
     socket.on('addPlayer', (player) => {
-        io.emit('playerJoined', player);
+        io.emit('playerAdded', player);
     });
 
     socket.on('removePlayer', (player) => {
@@ -35,8 +35,8 @@ io.on('connection', (socket) => {
         io.emit('inGameEditedPlayer', player);
     });
 
-    socket.on('inGamePlayerToDelete', (player) => {
-        io.emit('inGameDeletedPlayer', player);
+    socket.on('removeInGamePlayer', (player) => {
+        io.emit('inGamePlayerRemoved', player);
     });
 
     socket.on('revealLandingSpot', (spot) => {

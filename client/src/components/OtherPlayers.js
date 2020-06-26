@@ -6,7 +6,6 @@ import tahti from '../images/tahti.png';
 
 const OtherPlayers = () => {
     const inGamePlayers = useSelector(state => state.inGamePlayers);
-    //const players = useSelector(state => state.players);
     const user = useSelector(state => state.user);
 
     const otherPlayers = inGamePlayers.filter(p => p.uuid !== user.uuid);

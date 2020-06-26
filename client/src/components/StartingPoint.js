@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import { gameSocket } from '../index';
 import { setAlert } from '../reducers/alertReducer';
 import { movePawn, flyPawn } from './Pawn';
+import { gameSocket } from '../SocketsGame';
 
 const StartingPoint = () => {
     const dispatch = useDispatch();

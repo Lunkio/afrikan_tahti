@@ -7,7 +7,6 @@ import { store } from './store';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from '@material-ui/core/styles';
 import theme from './styles/theme';
-import io from 'socket.io-client';
 
 // lisää tokenit DB:hen
 // import landingTokenService from './services/landingTokenService';
@@ -40,22 +39,6 @@ import io from 'socket.io-client';
 //     }
 // };
 // canvas.addEventListener('mousedown', onMouseClick);
-
-export let lobbySocket;
-// eslint-disable-next-line
-if (process.env.NODE_ENV === 'development') {
-    lobbySocket = io(':3001');
-} else {
-    lobbySocket = io('https://afrikan-tahti.herokuapp.com/');
-}
-
-export let gameSocket;
-// eslint-disable-next-line
-if (process.env.NODE_ENV === 'development') {
-    gameSocket = io(':3001');
-} else {
-    gameSocket = io('https://afrikan-tahti.herokuapp.com/');
-}
 
 const renderApp = () => {
     ReactDOM.render(

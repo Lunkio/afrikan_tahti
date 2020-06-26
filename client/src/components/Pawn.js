@@ -7,7 +7,7 @@ import pawnTurq from '../images/pawn_turq.png';
 import pawnRed from '../images/pawn_red.png';
 import pawnWhite from '../images/pawn_white.png';
 import pawnViolet from '../images/pawn_violet.png';
-import { gameSocket } from '../index';
+import { gameSocket } from '../SocketsGame';
 
 export const movePawn = (spot, player) => {
     player.coordX = spot.coordX;

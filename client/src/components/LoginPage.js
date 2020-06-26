@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { newUser } from '../reducers/userReducer';
 import { setAlert } from '../reducers/alertReducer';
 import { v4 as uuid } from 'uuid';
-import { lobbySocket } from '../index';
+import { lobbySocket } from '../SocketsLobby';
 
 const LoginPage = () => {
     const dispatch = useDispatch();
@@ -34,7 +34,7 @@ const LoginPage = () => {
             flightControl: 0,
             coordX: 0,
             coordY: 0,
-            turnOrder: Math.ceil(Math.random() * 10000000),
+            turnOrder: Math.ceil(Math.random() * 10000),
             canPlay: false,
             hasMoved: false,
             stepsRemain: 0,
@@ -42,7 +42,7 @@ const LoginPage = () => {
             flightTicket: false,
             boatTicket: false,
             freeBoatTicket: false,
-            money: 3000,
+            money: 300,
             hasWatchedTreasure: false,
             hasGambled: false,
             hasStar: false,

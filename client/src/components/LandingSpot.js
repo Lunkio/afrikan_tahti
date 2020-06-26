@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import pahvi from '../images/pahvi.png';
 import { movePawn, flyPawn } from './Pawn';
-import { gameSocket } from '../index';
+import { gameSocket } from '../SocketsGame';
 
 const LandingSpot = () => {
     const inGamePlayers = useSelector(state => state.inGamePlayers);

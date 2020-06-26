@@ -10,7 +10,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setAlert } from '../reducers/alertReducer';
 import { syncPlayers } from '../reducers/playersReducer';
 import { removePlayerFromLobby } from '../gameUtils';
-import { lobbySocket } from '../index';
+import { lobbySocket } from '../SocketsLobby';
 
 const Lobby = ({ setPlayerInLobby }) => {
     const dispatch = useDispatch();
@@ -48,7 +48,9 @@ const Lobby = ({ setPlayerInLobby }) => {
 
     // asettaa thisLobbyn pelaajan tietojen mukaan
     useEffect(() => {
-        setThisLobby(lobbies.find(l => l.uuid === player.lobbyuuid));
+        if (player) {
+            setThisLobby(lobbies.find(l => l.uuid === player.lobbyuuid));
+        }
     // eslint-disable-next-line
     }, [lobbies]);
 

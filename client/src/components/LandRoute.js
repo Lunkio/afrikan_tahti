@@ -7,7 +7,6 @@ import { setAlert } from '../reducers/alertReducer';
 const LandRoute = () => {
     const dispatch = useDispatch();
     const inGamePlayers = useSelector(state => state.inGamePlayers);
-    //const players = useSelector(state => state.players);
     const user = useSelector(state => state.user);
     const landRoutes = useSelector(state => state.landRoutes);
     //console.log('landRoutes', landRoutes);

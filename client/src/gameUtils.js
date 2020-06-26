@@ -1,5 +1,5 @@
 import lobbyService from './services/lobbyService';
-import { lobbySocket } from './index';
+import { lobbySocket } from './SocketsLobby';
 
 let tokens = [
     { type: 'tahti', moneyValue: 0 },
@@ -48,5 +48,37 @@ export const removePlayerFromLobby = async (player) => {
         }
     } catch (e) {
         console.log('error', e);
+    }
+};
+
+export const setDefaultPlayerProperties = (player, status) => {
+    player.color = '';
+    player.lobbyReady = false;
+    player.startReady = false;
+    player.stepControl = 0;
+    player.flightControl = 0;
+    player.coordX = 0;
+    player.coordY = 0;
+    player.turnOrder = Math.ceil(Math.random() * 10000);
+    player.canPlay = false;
+    player.hasMoved = false;
+    player.stepsRemain = 0;
+    player.hasFlown = false;
+    player.flightTicket = false;
+    player.boatTicket = false;
+    player.freeBoatTicket = false;
+    player.money = 300;
+    player.hasWatchedTreasure = false;
+    player.hasGambled = false;
+    player.hasStar = false;
+    player.hasShoe = false;
+    player.firstInCapeTown = false;
+    player.firstInGoldCoast = false;
+    player.winner = false;
+    if (status === 'leaving') {
+        player.inLobby = false;
+        player.lobbyuuid = '';
+        player.host = false;
+        player.lobbyCreator = false;
     }
 };

@@ -3,9 +3,8 @@ import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button } from '@material-ui/core';
 import landingTokenService from '../../services/landingTokenService';
-//import lobbyService from '../../services/lobbyService';
 import { setAlert } from '../../reducers/alertReducer';
-import { gameSocket } from '../../index';
+import { gameSocket } from '../../SocketsGame';
 
 const StartingPhase = ({ setPlayerGameReady }) => {
     const dispatch = useDispatch();
@@ -62,24 +61,12 @@ const StartingPhase = ({ setPlayerGameReady }) => {
             if (allPlayersNotReady === undefined) {
                 if (player.host) {
                     getLandingTokens(thisLobby);
-                    //editLobby(thisLobby);
                 }
                 setPlayerGameReady(true);
             }
         }
     // eslint-disable-next-line
     }, [playersInThisLobby]);
-
-    // const editLobby = async (lobby) => {
-    //     try {
-    //         lobby.inGamePlayersReady = true;
-    //         const updatedLobby = await lobbyService.editLobby(lobby);
-    //         socket.emit('lobbyToEdit', updatedLobby);
-    //     } catch (e) {
-    //         console.log('error', e);
-    //         dispatch(setAlert('Jokin meni pieleen =('));
-    //     }
-    // };
 
     const player = inGamePlayers.find(p => p.uuid === user.uuid);
     if (!player) {

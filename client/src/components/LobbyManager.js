@@ -6,7 +6,7 @@ import { setAlert } from '../reducers/alertReducer';
 import { v4 as uuid } from 'uuid';
 import { removeLobby } from '../reducers/lobbyReducer';
 import lobbyService from '../services/lobbyService';
-import { lobbySocket } from '../index';
+import { lobbySocket } from '../SocketsLobby';
 
 const LobbyManager = ({ setPlayerInLobby }) => {
     const dispatch = useDispatch();

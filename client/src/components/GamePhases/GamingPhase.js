@@ -4,11 +4,11 @@ import styled from 'styled-components';
 import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { setAlert } from '../../reducers/alertReducer';
-import { gameSocket } from '../../index';
+import { initInGamePlayers } from '../../reducers/inGamePlayersReducer';
+import { gameSocket } from '../../SocketsGame';
 
 const GamingPhase = () => {
     const dispatch = useDispatch();
-    //const players = useSelector(state => state.players);
     const inGamePlayers = useSelector(state => state.inGamePlayers);
     const user = useSelector(state => state.user);
     const landingSpots = useSelector(state => state.landingSpots);
@@ -18,8 +18,8 @@ const GamingPhase = () => {
     const [diceValue, setDiceValue] = useState(1);
     const [confirmEndTurn, setConfirmEndTurn] = useState(false);
     const [stepsRemainInCaseBoatTicketCancel, setStepsRemainInCaseBoatTicketCancel] = useState(0);
-    // const [amountOfPlayers, setAmountOfPlayers] = useState(players.length);
-    //console.log('inGamePlayers', inGamePlayers);
+    const [amountOfPlayers, setAmountOfPlayers] = useState(inGamePlayers.length);
+    const [currentPlayerTurnOrder, setCurrentPlayerTurnOrder] = useState(0);
 
     // asettaa pelaajille (player.turn) arvoksi 0,1,2 jne... Vain kerran
     useEffect(() => {
@@ -44,12 +44,23 @@ const GamingPhase = () => {
     // eslint-disable-next-line
     }, []);
 
-    // useEffect(() => {
-    //     const amountOfPlayersCurrently = players.length;
-    //     if (amountOfPlayersCurrently !== amountOfPlayers) {
-
-    //     }
-    // }, [players]);
+    // pitää kirjaa pelaajista, jos joku pelaaja lähtee pelistä niin korjaa turn-numerot
+    useEffect(() => {
+        const amountOfPlayersCurrently = inGamePlayers.length;
+        if (amountOfPlayersCurrently !== amountOfPlayers) {
+            const sortedPlayers = inGamePlayers.sort((a,b) => a.turnOrder - b.turnOrder);
+            for (let i = 0; i < sortedPlayers.length; i++) {
+                sortedPlayers[i].turnOrder = i;
+            }
+            const thereIsPlayerWhoCanPlay = sortedPlayers.find(p => p.canPlay === true);
+            if (!thereIsPlayerWhoCanPlay) {
+                sortedPlayers[currentPlayerTurnOrder].canPlay = true;
+            }
+            dispatch(initInGamePlayers(sortedPlayers));
+            setAmountOfPlayers(amountOfPlayersCurrently);
+        }
+    // eslint-disable-next-line
+    }, [inGamePlayers]);
 
     const player = inGamePlayers.find(p => p.uuid === user.uuid);
     if (!player) {
@@ -57,7 +68,10 @@ const GamingPhase = () => {
     }
 
     const changeTurn = () => {
-        const previousPlayer = inGamePlayers.find(p => p.canPlay === true);
+        let previousPlayer = inGamePlayers.find(p => p.canPlay === true);
+        if (!previousPlayer) {
+            previousPlayer = inGamePlayers.find(p => p.turnOrder === 0);
+        }
         previousPlayer.canPlay = false;
         previousPlayer.flightTicket = false;
         previousPlayer.stepsRemain = 0;
@@ -75,6 +89,7 @@ const GamingPhase = () => {
         }
         gameSocket.emit('inGamePlayerToEdit', previousPlayer);
         gameSocket.emit('inGamePlayerToEdit', nextPlayer);
+        setCurrentPlayerTurnOrder(nextPlayer.turnOrder);
         setDiceBeenThrown(false);
     };
 
@@ -201,14 +216,17 @@ const GamingPhase = () => {
 
     return (
         <div>
-            <GameHeader>
-                <p>Vuorossa: <b>{getPlayerWhoHasTurn()}</b></p>
-                <Button disabled={!player.canPlay} onClick={endTurn} variant='contained' color='secondary'>
+            <TurnButton>
+                <Button disabled={!player.canPlay} onClick={endTurn} variant='contained' color='secondary' fullWidth >
                     {confirmEndTurn
                         ? 'Varmasti?'
-                        : 'Vuoro'
+                        : 'Lopeta vuoro'
                     }
                 </Button>
+            </TurnButton>
+            <GameHeader>
+                <p>Vuorossa: <b>{getPlayerWhoHasTurn()}</b></p>
+                <h3>Timer</h3>
             </GameHeader>
             <DiceContainer>
                 <Button disabled={diceCanBeThrown()} onClick={throwDice} color='primary' variant='contained'>
@@ -262,6 +280,11 @@ const GamingPhase = () => {
         </div>
     );
 };
+
+const TurnButton = styled.div`
+    margin-bottom: -0.7rem;
+    margin-top: 0.2rem;
+`;
 
 const GameHeader = styled.div`
     display: flex;

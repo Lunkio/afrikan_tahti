@@ -28,6 +28,7 @@ import GamingPhase from './components/GamePhases/GamingPhase';
 import GameOver from './components/GamePhases/GameOver';
 import SocketsLobby from './SocketsLobby';
 import SocketsGame from './SocketsGame';
+import { lobbySocket } from './SocketsLobby';
 
 const App = ({ updater }) => {
     const dispatch = useDispatch();
@@ -39,12 +40,12 @@ const App = ({ updater }) => {
     const [playerLobbyReady, setPlayerLobbyReady] = useState(false);
     const [playerGameReady, setPlayerGameReady] = useState(false);
     const [gameOver, setGameOver] = useState(false);
+    const [playerLeftFromGame, setPlayerLeftFromGame] = useState({ state: false, player: null });
 
     // Hakee spotit db:stä
     useEffect(() => {
         const fetch = async () => {
             try {
-                //await dispatch(initLandingSpots());
                 await dispatch(initStartPoints());
                 await dispatch(initLandRoutes());
                 await dispatch(initSeaRoutes());
@@ -52,52 +53,26 @@ const App = ({ updater }) => {
                 dispatch(initUser());
             } catch (e) {
                 console.log('error', e);
-                dispatch(setAlert('All info was not retrieved from DB'));
+                dispatch(setAlert('Virhe tapahtui palvelimen kanssa, yritä myöhemmin uudelleen'));
             }
         };
         fetch();
     // eslint-disable-next-line
     }, [updater]);
 
-    // kuuntelee serveriä
-    // useEffect(() => {
-    //     socket.on('lobbyAdded', (lobby) => {
-    //         dispatch(addNewLobby(lobby));
-    //     });
-
-    //     socket.on('lobbyRemoved', (lobby) => {
-    //         dispatch(removeLobby(lobby));
-    //     });
-
-    //     socket.on('editedLobby', (lobby) => {
-    //         dispatch(editLobbyDetails(lobby));
-    //     });
-
-    //     socket.on('playerJoined', (player) => {
-    //         dispatch(newPlayer(player));
-    //     });
-
-    //     socket.on('playerRemoved', (player) => {
-    //         dispatch(removePlayer(player));
-    //     });
-
-    //     socket.on('editedPlayer', (player) => {
-    //         dispatch(editPlayerDetails(player));
-    //     });
-
-    //     socket.on('landingSpotRevealed', (spot) => {
-    //         dispatch(revealLandingSpot(spot));
-    //     });
-
-    //     socket.on('starFound', () => {
-    //         dispatch(foundStar());
-    //     });
-
-    //     socket.on('tokensAdded', (tokens, thisLobby) => {
-    //         dispatch(initLandingTokens(tokens));
-    //     });
-    // // eslint-disable-next-line
-    // }, []);
+    // kun pelaaja lähtee pelistä, lobbetSocket aktivoituu vasta kun playerLobbyReady on false, joten lobbySocket.emit tapahtuu vasta tämän jälkeen
+    useEffect(() => {
+        if (!playerLobbyReady) {
+            if (playerLeftFromGame.state) {
+                if (playerLeftFromGame.player !== null) {
+                    dispatch(initLobbies());
+                    setPlayerLeftFromGame({ state: false, player: null });
+                    lobbySocket.emit('addPlayer', playerLeftFromGame.player);
+                }
+            }
+        }
+    // eslint-disable-next-line
+    }, [playerLeftFromGame, playerLobbyReady]);
 
     // Asettaa pelinäkymän kun pelaajat valmiina lobbyssa, asettaa lobbyn pelaajat uuteen stateen ja antaa thisLobbyn socketille
     useEffect(() => {
@@ -122,15 +97,6 @@ const App = ({ updater }) => {
     // eslint-disable-next-line
     }, [lobbies]);
 
-    // Julistaa voittajan ja näyttää voitto-ikkunan
-    // useEffect(() => {
-    //     const thereIsWinner = players.find(p => p.winner === true);
-    //     if (thereIsWinner) {
-    //         setGameOver(true);
-    //     }
-    // // eslint-disable-next-line
-    // }, [players]);
-
     return (
         <React.Fragment>
             {!user && <LoginPage />}
@@ -149,7 +115,7 @@ const App = ({ updater }) => {
                     <PlayerSection>
                         {!playerGameReady && <StartingPhase setPlayerGameReady={setPlayerGameReady} />}
                         {playerGameReady && <GamingPhase />}
-                        <PlayerView />
+                        <PlayerView setPlayerLeftFromGame={setPlayerLeftFromGame} setPlayerLobbyReady={setPlayerLobbyReady} setPlayerInLobby={setPlayerInLobby} setPlayerGameReady={setPlayerGameReady} />
                         <OtherPlayers />
                     </PlayerSection>
                 </PlayArena>

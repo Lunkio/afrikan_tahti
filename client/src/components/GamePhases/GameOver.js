@@ -7,8 +7,8 @@ import { removeLandingTokens } from '../../reducers/landingTokenReducer';
 import { hideLandingSpots } from '../../reducers/landingSpotReducer';
 import { initLobbies } from '../../reducers/lobbyReducer';
 import { removeAllInGamePlayersFromState } from '../../reducers/inGamePlayersReducer';
-import { removePlayerFromLobby } from '../../gameUtils';
-import { lobbySocket } from '../../index';
+import { removePlayerFromLobby, setDefaultPlayerProperties } from '../../gameUtils';
+import { lobbySocket } from '../../SocketsLobby';
 
 const GameOver = ({ gameOver, setGameOver, setPlayerInLobby, setPlayerLobbyReady, setPlayerGameReady }) => {
     const dispatch = useDispatch();
@@ -24,44 +24,19 @@ const GameOver = ({ gameOver, setGameOver, setPlayerInLobby, setPlayerLobbyReady
             setPlayerLobbyReady(false);
             dispatch(removeLandingTokens());
             dispatch(hideLandingSpots(landingSpots));
+            dispatch(initLobbies());
         }
     // eslint-disable-next-line
     }, [gameOver]);
-
-    const setDefaultPlayerProperties = (player) => {
-        player.color = '';
-        player.lobbyReady = false;
-        player.startReady = false;
-        player.stepControl = 0;
-        player.flightControl = 0;
-        player.coordX = 0;
-        player.coordY = 0;
-        player.turnOrder = Math.ceil(Math.random() * 10000000);
-        player.canPlay = false;
-        player.hasMoved = false;
-        player.stepsRemain = 0;
-        player.hasFlown = false;
-        player.flightTicket = false;
-        player.boatTicket = false;
-        player.freeBoatTicket = false;
-        player.money = 300;
-        player.hasWatchedTreasure = false;
-        player.hasGambled = false;
-        player.hasStar = false;
-        player.hasShoe = false;
-        player.firstInCapeTown = false;
-        player.firstInGoldCoast = false;
-        player.winner = false;
-    };
 
     const playerWantsNewGame = () => {
         const player = inGamePlayers.find(p => p.uuid === user.uuid);
         if (player) {
             setDefaultPlayerProperties(player);
-            lobbySocket.emit('playerToEdit', player);
             dispatch(removeAllInGamePlayersFromState());
             setGameOver(false);
             setPlayerGameReady(false);
+            lobbySocket.emit('addPlayer', player);
         }
     };
 
@@ -69,17 +44,12 @@ const GameOver = ({ gameOver, setGameOver, setPlayerInLobby, setPlayerLobbyReady
         const player = inGamePlayers.find(p => p.uuid === user.uuid);
         if (player) {
             removePlayerFromLobby(player);
-            setDefaultPlayerProperties(player);
-            player.inLobby = false;
-            player.lobbyuuid = '';
-            player.host = false;
-            player.lobbyCreator = false;
-            lobbySocket.emit('playerToEdit', player);
+            setDefaultPlayerProperties(player, 'leaving');
             dispatch(removeAllInGamePlayersFromState());
             setGameOver(false);
             setPlayerInLobby(false);
             setPlayerGameReady(false);
-            dispatch(initLobbies());
+            lobbySocket.emit('addPlayer', player);
         }
     };
 

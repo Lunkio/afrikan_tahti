@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import styled from 'styled-components';
 import kenka from '../images/kenka.png';
@@ -6,10 +7,11 @@ import tahti from '../images/tahti.png';
 import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { setAlert } from '../reducers/alertReducer';
-import { logoutUser } from '../reducers/userReducer';
-import { gameSocket } from '../index';
+import { removeAllInGamePlayersFromState } from '../reducers/inGamePlayersReducer';
+import { removePlayerFromLobby, setDefaultPlayerProperties } from '../gameUtils';
+import { gameSocket } from '../SocketsGame';
 
-const PlayerView = () => {
+const PlayerView = ({ setPlayerLeftFromGame, setPlayerLobbyReady, setPlayerInLobby, setPlayerGameReady }) => {
     const dispatch = useDispatch();
     const user = useSelector(state => state.user);
     const inGamePlayers = useSelector(state => state.inGamePlayers);
@@ -17,9 +19,18 @@ const PlayerView = () => {
     const landingTokens = useSelector(state => state.landingTokens);
     const starIsFound = useSelector(state => state.starIsFound);
 
-    const handleLogout = () => {
-        dispatch(logoutUser());
-        //socket.emit('removePlayer', player);
+    const handlePlayerLeave = () => {
+        removePlayerFromLobby(player);
+        setDefaultPlayerProperties(player, 'leaving');
+        gameSocket.emit('removeInGamePlayer', player);
+        dispatch(removeAllInGamePlayersFromState());
+        setPlayerInLobby(false);
+        setPlayerGameReady(false);
+        setPlayerLobbyReady(false);
+        setPlayerLeftFromGame({
+            state: true,
+            player: player
+        });
     };
 
     // tarkistaa Afrikan tähden löytäjän ja ilmoittaa siitä kunnes pelaaja löytää hevosenkengän
@@ -71,7 +82,6 @@ const PlayerView = () => {
             break;
         case 'tahti':
             player.hasStar = true;
-            gameSocket.emit('starIsFound', player);
             dispatch(setAlert('Löysit Afrikan tähden! Vie se takaisin Kairoon tai Tangeriin'));
             break;
         case 'kenka':
@@ -123,9 +133,9 @@ const PlayerView = () => {
             checkLandingTokenType(landingToken, player);
             gameSocket.emit('inGamePlayerToEdit', player);
             gameSocket.emit('revealLandingSpot', landingSpot);
-            // if (player.hasStar) {
-            //     gameSocket.emit('starIsFound');
-            // }
+            if (player.hasStar && starIsFound === false) {
+                gameSocket.emit('starIsFound', player);
+            }
         }
     };
 
@@ -172,7 +182,7 @@ const PlayerView = () => {
                     <ImageStyle style={showShoeImage(player.hasShoe)} src={kenka} alt='hevosenkenkä' />
                 </div>
                 <div>
-                    <Button color='secondary' variant='outlined' onClick={handleLogout}>
+                    <Button color='secondary' variant='outlined' onClick={handlePlayerLeave}>
                         Poistu
                     </Button>
                 </div>
@@ -220,5 +230,12 @@ const PlayerName = styled.h2`
 const ImageStyle = styled.img`
     width: 30px;
 `;
+
+PlayerView.propTypes = {
+    setPlayerLeftFromGame: PropTypes.func,
+    setPlayerLobbyReady: PropTypes.func,
+    setPlayerInLobby: PropTypes.func,
+    setPlayerGameReady: PropTypes.func
+};
 
 export default PlayerView;
