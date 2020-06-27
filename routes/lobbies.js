@@ -51,6 +51,14 @@ lobbiesRouter.put('/:id', async (req, res) => {
             playersInLobby: body.playersInLobby,
             uuid: body.uuid
         };
+
+        // poistaa Lobbyn jos siinä ei ole pelaajia
+        if (lobby.playersInLobby.length === 0) {
+            await Lobby.findByIdAndRemove(req.params.id);
+            res.status(204).end();
+            return;
+        }
+
         const modifiedLobby = await Lobby.findByIdAndUpdate(req.params.id, lobby, { new: true });
         if (!modifiedLobby) {
             res.status(404).send({ error: 'lobby does not exist' });
@@ -66,7 +74,7 @@ lobbiesRouter.put('/:id', async (req, res) => {
 lobbiesRouter.delete('/single/:id', async (req, res) => {
     try {
         await Lobby.findByIdAndRemove(req.params.id);
-        res.status(204).end()
+        res.status(204).end();
     } catch (e) {
         console.log('error', e);
         res.status(409);

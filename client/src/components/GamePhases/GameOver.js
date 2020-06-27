@@ -5,38 +5,74 @@ import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeLandingTokens } from '../../reducers/landingTokenReducer';
 import { hideLandingSpots } from '../../reducers/landingSpotReducer';
-import { initLobbies } from '../../reducers/lobbyReducer';
 import { removeAllInGamePlayersFromState } from '../../reducers/inGamePlayersReducer';
-import { removePlayerFromLobby, setDefaultPlayerProperties } from '../../gameUtils';
+import { removePlayerFromLobby, setDefaultPlayerProperties, updateLobbyAndPlayer } from '../../gameUtils';
+import { setAlert } from '../../reducers/alertReducer';
+import lobbyService from '../../services/lobbyService';
 import { lobbySocket } from '../../SocketsLobby';
 
 const GameOver = ({ gameOver, setGameOver, setPlayerInLobby, setPlayerLobbyReady, setPlayerGameReady }) => {
     const dispatch = useDispatch();
     const user = useSelector(state => state.user);
+    const lobbies = useSelector(state => state.lobbies);
+    const players = useSelector(state => state.players);
     const inGamePlayers = useSelector(state => state.inGamePlayers);
     const landingSpots = useSelector(state => state.landingSpots);
     const [winnerName, setWinnerName] = useState('');
+    const [newGame, setNewGame] = useState(false);
 
     useEffect(() => {
         const winner = inGamePlayers.find(p => p.winner === true);
         if (winner) {
             setWinnerName(winner.name);
             setPlayerLobbyReady(false);
+            setPlayerGameReady(false);
             dispatch(removeLandingTokens());
             dispatch(hideLandingSpots(landingSpots));
-            dispatch(initLobbies());
         }
     // eslint-disable-next-line
     }, [gameOver]);
 
+    // tämä odottaa kunnes lobbySocketin addPlayer on toteunut ensin ja sitten vasta asetetaan gameOver falseksi, jolloinka lobby komponentti näyttää playersit oikein
+    useEffect(() => {
+        if (newGame) {
+            const player = players.find(p => p.uuid === user.uuid);
+            if (player) {
+                setNewGame(false);
+                setGameOver(false);
+            }
+        }
+    // eslint-disable-next-line
+    }, [newGame, players]);
+
+    const setLobbyInGameToFalse = async (player, lobby) => {
+        try {
+            const thisLobby = await lobbyService.getSingleLobby(lobby);
+            if (thisLobby) {
+                if (thisLobby.inGame) {
+                    thisLobby.inGame = false;
+                    updateLobbyAndPlayer(player, thisLobby, 'gameOverComponent');
+                } else {
+                    updateLobbyAndPlayer(player, thisLobby, 'gameOverComponent');
+                }
+            }
+        } catch (e) {
+            console.log('error', e);
+            dispatch(setAlert('Jokin meni pieleen =('));
+        }
+    };
+
     const playerWantsNewGame = () => {
         const player = inGamePlayers.find(p => p.uuid === user.uuid);
         if (player) {
-            setDefaultPlayerProperties(player);
+            setDefaultPlayerProperties(player, 'notLeaving');
+            const thisLobby = lobbies.find(l => l.uuid === player.lobbyuuid);
+            if (thisLobby) {
+                setLobbyInGameToFalse(player, thisLobby);
+            }
             dispatch(removeAllInGamePlayersFromState());
-            setGameOver(false);
-            setPlayerGameReady(false);
             lobbySocket.emit('addPlayer', player);
+            setNewGame(true);
         }
     };
 
@@ -48,7 +84,6 @@ const GameOver = ({ gameOver, setGameOver, setPlayerInLobby, setPlayerLobbyReady
             dispatch(removeAllInGamePlayersFromState());
             setGameOver(false);
             setPlayerInLobby(false);
-            setPlayerGameReady(false);
             lobbySocket.emit('addPlayer', player);
         }
     };

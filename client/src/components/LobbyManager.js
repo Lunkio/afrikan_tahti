@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Container, Button, TextField } from '@material-ui/core';
+import styled from 'styled-components';
+import { Container, Button, TextField, Paper } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAlert } from '../reducers/alertReducer';
 import { v4 as uuid } from 'uuid';
@@ -82,13 +83,14 @@ const LobbyManager = ({ setPlayerInLobby }) => {
     };
 
     return (
-        <Container maxWidth='md' style={{marginTop: '5rem'}}>
+        <Container maxWidth='md'>
             {lobbyCreation &&
-            <div>
+            <LobbyCreate>
                 <form onSubmit={handleNewLobby}>
                     <TextField 
                         autoFocus
                         fullWidth
+                        style={{background: 'rgba(255,255,255, 0.7)'}}
                         variant='outlined'
                         size='medium'
                         placeholder='Huoneen nimi'
@@ -97,45 +99,105 @@ const LobbyManager = ({ setPlayerInLobby }) => {
                         onChange={e => setLobbyName(e.target.value)}
                     />
                     <hr />
-                    <Button variant='outlined' color='primary' type='submit'>
+                    <Button variant='contained' color='primary' type='submit'>
                         Luo huone
                     </Button>
                 </form>
-                <Button onClick={cancelLobbyCreation} color='secondary' variant='contained'>
-                    Peru
-                </Button>
-            </div>
+                <CancelButton>
+                    <Button onClick={cancelLobbyCreation} color='secondary' variant='contained'>
+                        Takaisin
+                    </Button>
+                </CancelButton>
+            </LobbyCreate>
             }
             {defaultView &&
-            <div>
-                <Button
-                    variant='contained'
-                    color='primary'
-                    onClick={createLobby}
-                >
-                    Luo pelihuone
-                </Button>
-                {lobbies.map(lobby =>
-                    <div key={lobby.id}>
-                        {lobby.name}
-                        <Button
-                            variant='contained'
-                            color='secondary'
-                            onClick={() => joinLobby(lobby)}
-                            disabled={lobby.inGame}
+            <LobbiesContainer>
+                <CreateLobbyButton>
+                    <Button
+                        variant='contained'
+                        color='primary'
+                        onClick={createLobby}
+                        size='large'
+                    >
+                        Luo pelihuone
+                    </Button>
+                </CreateLobbyButton>
+                <Lobbies>
+                    {lobbies.map(lobby =>
+                        <Paper
+                            key={lobby.id}
+                            variant='elevation'
+                            elevation={5}
+                            style={{backgroundColor: 'rgba(126,139,255,0.7', width: '48%'}}
                         >
-                            {lobby.inGame
-                                ? 'Peli käynnissä'
-                                : 'Liity'
-                            }
-                        </Button>
-                    </div>
-                )}
-            </div>
+                            <SingeLobby>
+                                <LobbyDetails>
+                                    <h2>{lobby.name}</h2>
+                                    <h5>Pelaajia: {lobby.playersInLobby.length}/6 </h5>
+                                </LobbyDetails>
+                                <LobbyJoinButton>
+                                    <Button
+                                        variant='contained'
+                                        color='secondary'
+                                        onClick={() => joinLobby(lobby)}
+                                        disabled={lobby.inGame}
+                                    >
+                                        {lobby.inGame
+                                            ? 'Peli käynnissä'
+                                            : 'Liity'
+                                        }
+                                    </Button>
+                                </LobbyJoinButton>
+                            </SingeLobby>
+                        </Paper>
+                    )}
+                </Lobbies>
+            </LobbiesContainer>
             }
         </Container>
     );
 };
+
+const LobbiesContainer = styled.div`
+    padding-top: 3rem;
+`;
+
+const Lobbies = styled.div`
+    display: flex;
+    justify-content: space-between;
+`;
+
+const SingeLobby = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+`;
+
+const LobbyDetails = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 70%;
+    margin-left: 1rem;
+    margin-right: 1rem;
+`;
+
+const LobbyJoinButton = styled.div`
+    width: 20%;
+`;
+
+const CreateLobbyButton = styled.div`
+    margin-bottom: 5rem;
+`;
+
+const LobbyCreate = styled.div`
+    padding-top: 5rem;
+`;
+
+const CancelButton = styled.div`
+    float: right;
+    margin-top: -35px;
+`;
 
 LobbyManager.propTypes = {
     setPlayerInLobby: PropTypes.func

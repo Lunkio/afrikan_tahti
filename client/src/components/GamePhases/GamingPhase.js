@@ -5,10 +5,12 @@ import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { setAlert } from '../../reducers/alertReducer';
 import { initInGamePlayers } from '../../reducers/inGamePlayersReducer';
+import { turnToFalse } from '../../reducers/turnReducer';
 import { gameSocket } from '../../SocketsGame';
 
 const GamingPhase = () => {
     const dispatch = useDispatch();
+    const turn = useSelector(state => state.turn);
     const inGamePlayers = useSelector(state => state.inGamePlayers);
     const user = useSelector(state => state.user);
     const landingSpots = useSelector(state => state.landingSpots);
@@ -61,6 +63,15 @@ const GamingPhase = () => {
         }
     // eslint-disable-next-line
     }, [inGamePlayers]);
+
+    // vaihtaa vuoroa kun pelaaja on katsonut tokenin (siksi reducer koska tokenin katsominen eri komponentissa ja changeTurn() -funktiota ei voi siirtää tästä komponentista)
+    useEffect(() => {
+        if (turn) {
+            changeTurn();
+            dispatch(turnToFalse());
+        }
+    // eslint-disable-next-line
+    }, [turn]);
 
     const player = inGamePlayers.find(p => p.uuid === user.uuid);
     if (!player) {

@@ -3,6 +3,7 @@ body {
   font-family: 'Chelsea Market', cursive;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* background: url('./images/background.jpg') no-repeat center center fixed; */
 }
 
 .color-selected {
@@ -27,3 +28,7 @@ body {
 .landing-spot-focus-removal:focus {
   outline: 0;
 }
+
+/* .test-color {
+  color: rgb(126, 139, 255);
+} */

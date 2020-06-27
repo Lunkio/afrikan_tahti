@@ -1,11 +1,13 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import pahvi from '../images/pahvi.png';
 import { movePawn, flyPawn } from './Pawn';
+import { setAlert } from '../reducers/alertReducer';
 import { gameSocket } from '../SocketsGame';
 
 const LandingSpot = () => {
+    const dispatch = useDispatch();
     const inGamePlayers = useSelector(state => state.inGamePlayers);
     const user = useSelector(state => state.user);
     const landingSpots = useSelector(state => state.landingSpots);
@@ -17,6 +19,7 @@ const LandingSpot = () => {
                 player.firstInCapeTown = true;
                 player.money = player.money +500;
                 gameSocket.emit('inGamePlayerToEdit', player);
+                dispatch(setAlert('Olit ensimmäinen Cape Townissa, sait 500'));
             }
         }
     };

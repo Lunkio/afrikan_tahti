@@ -1,40 +1,22 @@
 import lobbyService from './services/lobbyService';
 import { lobbySocket } from './SocketsLobby';
 
-let tokens = [
-    { type: 'tahti', moneyValue: 0 },
-    { type: 'punainen', moneyValue: 1000 },
-    { type: 'punainen', moneyValue: 1000 },
-    { type: 'vihrea', moneyValue: 600 },
-    { type: 'vihrea', moneyValue: 600 },
-    { type: 'vihrea', moneyValue: 600 },
-    { type: 'keltainen', moneyValue: 300 },
-    { type: 'keltainen', moneyValue: 300 },
-    { type: 'keltainen', moneyValue: 300 },
-    { type: 'keltainen', moneyValue: 300 },
-    { type: 'rosvo', moneyValue: 0 },
-    { type: 'rosvo', moneyValue: 0 },
-    { type: 'rosvo', moneyValue: 0 },
-    { type: 'kenka', moneyValue: 0 },
-    { type: 'kenka', moneyValue: 0 },
-    { type: 'kenka', moneyValue: 0 },
-    { type: 'kenka', moneyValue: 0 },
-    { type: 'kenka', moneyValue: 0 },
-    { type: 'tyhja', moneyValue: 0 },
-    { type: 'tyhja', moneyValue: 0 },
-    { type: 'tyhja', moneyValue: 0 },
-    { type: 'tyhja', moneyValue: 0 },
-    { type: 'tyhja', moneyValue: 0 },
-    { type: 'tyhja', moneyValue: 0 },
-    { type: 'tyhja', moneyValue: 0 },
-    { type: 'tyhja', moneyValue: 0 },
-    { type: 'tyhja', moneyValue: 0 },
-    { type: 'tyhja', moneyValue: 0 },
-    { type: 'tyhja', moneyValue: 0 },
-    { type: 'tyhja', moneyValue: 0 },
-];
-
-export default tokens;
+export const updateLobbyAndPlayer = async (player, thisLobby, status) => {
+    try {
+        const playerToEdit = thisLobby.playersInLobby.find(p => p.uuid === player.uuid);
+        playerToEdit.color = player.color;
+        playerToEdit.lobbyReady = player.lobbyReady;
+        const updatedPlayers = thisLobby.playersInLobby.map(p => p.uuid !== playerToEdit.uuid ? p : playerToEdit);
+        thisLobby.playersInLobby = updatedPlayers;
+        const updatedLobby = await lobbyService.editLobby(thisLobby);
+        lobbySocket.emit('lobbyToEdit', updatedLobby);
+        if (status === 'lobbyComponent') {
+            lobbySocket.emit('playerToEdit', player);
+        }
+    } catch (e) {
+        console.log('error', e);
+    }
+};
 
 export const removePlayerFromLobby = async (player) => {
     try {
@@ -82,3 +64,38 @@ export const setDefaultPlayerProperties = (player, status) => {
         player.lobbyCreator = false;
     }
 };
+
+let tokens = [
+    { type: 'tahti', moneyValue: 0 },
+    { type: 'punainen', moneyValue: 1000 },
+    { type: 'punainen', moneyValue: 1000 },
+    { type: 'vihrea', moneyValue: 600 },
+    { type: 'vihrea', moneyValue: 600 },
+    { type: 'vihrea', moneyValue: 600 },
+    { type: 'keltainen', moneyValue: 300 },
+    { type: 'keltainen', moneyValue: 300 },
+    { type: 'keltainen', moneyValue: 300 },
+    { type: 'keltainen', moneyValue: 300 },
+    { type: 'rosvo', moneyValue: 0 },
+    { type: 'rosvo', moneyValue: 0 },
+    { type: 'rosvo', moneyValue: 0 },
+    { type: 'kenka', moneyValue: 0 },
+    { type: 'kenka', moneyValue: 0 },
+    { type: 'kenka', moneyValue: 0 },
+    { type: 'kenka', moneyValue: 0 },
+    { type: 'kenka', moneyValue: 0 },
+    { type: 'tyhja', moneyValue: 0 },
+    { type: 'tyhja', moneyValue: 0 },
+    { type: 'tyhja', moneyValue: 0 },
+    { type: 'tyhja', moneyValue: 0 },
+    { type: 'tyhja', moneyValue: 0 },
+    { type: 'tyhja', moneyValue: 0 },
+    { type: 'tyhja', moneyValue: 0 },
+    { type: 'tyhja', moneyValue: 0 },
+    { type: 'tyhja', moneyValue: 0 },
+    { type: 'tyhja', moneyValue: 0 },
+    { type: 'tyhja', moneyValue: 0 },
+    { type: 'tyhja', moneyValue: 0 },
+];
+
+export default tokens;

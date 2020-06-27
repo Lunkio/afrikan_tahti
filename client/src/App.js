@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import backgroundImg from './images/background.jpg';
 import { useSelector, useDispatch } from 'react-redux';
 import { initUser } from './reducers/userReducer';
 import { setAlert } from './reducers/alertReducer';
@@ -26,6 +27,7 @@ import OtherPlayers from './components/OtherPlayers';
 import StartingPhase from './components/GamePhases/StartingPhase';
 import GamingPhase from './components/GamePhases/GamingPhase';
 import GameOver from './components/GamePhases/GameOver';
+import BottomPanel from './components/BottomPanel';
 import SocketsLobby from './SocketsLobby';
 import SocketsGame from './SocketsGame';
 import { lobbySocket } from './SocketsLobby';
@@ -57,6 +59,10 @@ const App = ({ updater }) => {
             }
         };
         fetch();
+
+        // return () => {
+
+        // };
     // eslint-disable-next-line
     }, [updater]);
 
@@ -99,6 +105,7 @@ const App = ({ updater }) => {
 
     return (
         <React.Fragment>
+            <Background />
             {!user && <LoginPage />}
             {user && !playerLobbyReady && !gameOver && !playerInLobby && <LobbyManager setPlayerInLobby={setPlayerInLobby} /> }
             {user && !playerLobbyReady && !gameOver && playerInLobby && <Lobby setPlayerInLobby={setPlayerInLobby} />}
@@ -107,6 +114,7 @@ const App = ({ updater }) => {
                 <PlayArena>
                     <div>
                         <Kartta />
+                        <BottomPanel setPlayerLeftFromGame={setPlayerLeftFromGame} setPlayerLobbyReady={setPlayerLobbyReady} setPlayerInLobby={setPlayerInLobby} setPlayerGameReady={setPlayerGameReady} />
                         <LandingSpot />
                         <LandRoute />
                         <SeaRoute />
@@ -115,7 +123,7 @@ const App = ({ updater }) => {
                     <PlayerSection>
                         {!playerGameReady && <StartingPhase setPlayerGameReady={setPlayerGameReady} />}
                         {playerGameReady && <GamingPhase />}
-                        <PlayerView setPlayerLeftFromGame={setPlayerLeftFromGame} setPlayerLobbyReady={setPlayerLobbyReady} setPlayerInLobby={setPlayerInLobby} setPlayerGameReady={setPlayerGameReady} />
+                        <PlayerView />
                         <OtherPlayers />
                     </PlayerSection>
                 </PlayArena>
@@ -135,6 +143,19 @@ const App = ({ updater }) => {
         </React.Fragment>
     );
 };
+
+const Background = styled.div`
+    background: url(${backgroundImg}) no-repeat center center fixed;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    z-index: -100;
+    /* filter: blur(8px);
+    -webkit-filter: blur(8px); */
+`;
 
 const Centered = styled.div`
     margin: 0;

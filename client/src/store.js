@@ -11,6 +11,7 @@ import seaRouteReducer from './reducers/seaRouteReducer';
 import starIsFoundReducer from './reducers/starIsFoundReducer';
 import lobbyReducer from './reducers/lobbyReducer';
 import inGamePlayersReducer from './reducers/inGamePlayersReducer';
+import turnReducer from './reducers/turnReducer';
 
 const reducers = combineReducers({
     user: userReducer,
@@ -23,7 +24,8 @@ const reducers = combineReducers({
     landRoutes: landRouteReducer,
     seaRoutes: seaRouteReducer,
     starIsFound: starIsFoundReducer,
-    lobbies: lobbyReducer
+    lobbies: lobbyReducer,
+    turn: turnReducer
 });
 
 export const store = createStore(reducers, applyMiddleware(thunk));

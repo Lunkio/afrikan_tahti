@@ -39,7 +39,7 @@ const SocketsGame = ({ thisLobby, setGameOver }) => {
 
         gameSocket.on('inGameEditedPlayer', (player) => {
             if (inGamePlayers.find(p => p.uuid === player.uuid)) {
-                console.log('SOCKET, pelaajan muokkaus tulee tänne');
+                //console.log('SOCKET, pelaajan muokkaus tulee tänne');
                 dispatch(editInGamePlayer(player));
                 if (player.winner) {
                     setGameOver(true);
@@ -49,14 +49,14 @@ const SocketsGame = ({ thisLobby, setGameOver }) => {
 
         gameSocket.on('inGamePlayerRemoved', (player) => {
             if (inGamePlayers.find(p => p.uuid === player.uuid)) {
-                console.log('SOCKET, pelaajan lähtö tulee tänne');
+                //console.log('SOCKET, pelaajan lähtö tulee tänne');
                 dispatch(removeInGamePlayer(player));
             }
         });
 
         gameSocket.on('starFound', (player) => {
             if (inGamePlayers.find(p => p.uuid === player.uuid)) {
-                console.log('SOCKET, tähden löytö tulee tänne');
+                //console.log('SOCKET, tähden löytö tulee tänne');
                 dispatch(foundStar());
             }
         });

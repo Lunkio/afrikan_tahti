@@ -16,6 +16,7 @@ const SocketsLobby = () => {
         } else {
             lobbySocket = io('https://afrikan-tahti.herokuapp.com/');
         }
+
         lobbySocket.on('lobbyAdded', (lobby) => {
             dispatch(addNewLobby(lobby));
         });
@@ -25,11 +26,12 @@ const SocketsLobby = () => {
         });
 
         lobbySocket.on('editedLobby', (lobby) => {
+            //console.log('SOCKET, editedLobby', lobby);
             dispatch(editLobbyDetails(lobby));
         });
 
         lobbySocket.on('playerAdded', (player) => {
-            console.log('playerAdded SOCKET', player);
+            //console.log('playerAdded SOCKET', player);
             dispatch(newPlayer(player));
         });
 

@@ -9,7 +9,7 @@ import lobbyService from '../services/lobbyService';
 import { useSelector, useDispatch } from 'react-redux';
 import { setAlert } from '../reducers/alertReducer';
 import { syncPlayers } from '../reducers/playersReducer';
-import { removePlayerFromLobby } from '../gameUtils';
+import { removePlayerFromLobby, updateLobbyAndPlayer } from '../gameUtils';
 import { lobbySocket } from '../SocketsLobby';
 
 const Lobby = ({ setPlayerInLobby }) => {
@@ -19,22 +19,8 @@ const Lobby = ({ setPlayerInLobby }) => {
     const lobbies = useSelector(state => state.lobbies);
     const [thisLobby, setThisLobby] = useState(undefined);
     const [playersInThisLobby, setPlayersInThisLobby] = useState([players.find(p => p.uuid === user.uuid)]);
-
-    const updateLobbyAndPlayer = async (player) => {
-        try {
-            const playerToEdit = thisLobby.playersInLobby.find(p => p.uuid === player.uuid);
-            playerToEdit.color = player.color;
-            playerToEdit.lobbyReady = player.lobbyReady;
-            const updatedPlayers = thisLobby.playersInLobby.map(p => p.uuid !== playerToEdit.uuid ? p : playerToEdit);
-            thisLobby.playersInLobby = updatedPlayers;
-            const updatedLobby = await lobbyService.editLobby(thisLobby);
-            lobbySocket.emit('lobbyToEdit', updatedLobby);
-            lobbySocket.emit('playerToEdit', player);
-        } catch (e) {
-            console.log('error', e);
-            dispatch(setAlert('Jokin meni pieleen =('));
-        }
-    };
+    // console.log('playersInThisLobby', playersInThisLobby);
+    // console.log('lobby komponentti players', players);
 
     const makePlayerHost = (player) => {
         player.host = true;
@@ -57,8 +43,8 @@ const Lobby = ({ setPlayerInLobby }) => {
     // lisää players stateen uuden liittyneen pelaajan, joka on liittynyt lobbyyn playeria(eli tämä, current) myöhemmin ja tekee lobbyCreatorista hostin
     useEffect(() => {
         if (thisLobby) {
-            const playersFromThisLobby = thisLobby.playersInLobby.filter(p => p.lobbyuuid === thisLobby.uuid);
             const allPlayersInThisLobby = [player];
+            const playersFromThisLobby = thisLobby.playersInLobby.filter(p => p.lobbyuuid === thisLobby.uuid);
             playersFromThisLobby.forEach((lobbyPlayer) => {
                 if (player.uuid !== lobbyPlayer.uuid) {
                     allPlayersInThisLobby.push(lobbyPlayer);
@@ -129,7 +115,7 @@ const Lobby = ({ setPlayerInLobby }) => {
             return;
         }
         player.color = color;
-        updateLobbyAndPlayer(player);
+        updateLobbyAndPlayer(player, thisLobby, 'lobbyComponent');
     };
 
     const markSelection = (color) => {
@@ -155,7 +141,7 @@ const Lobby = ({ setPlayerInLobby }) => {
             return;
         }
         player.lobbyReady = !player.lobbyReady;
-        updateLobbyAndPlayer(player);
+        updateLobbyAndPlayer(player, thisLobby, 'lobbyComponent');
     };
 
     const startGame = async () => {
@@ -230,8 +216,8 @@ const Lobby = ({ setPlayerInLobby }) => {
                     Pelaajat
                 </Typography>
                 <Paper style={{padding: '1rem'}} elevation={3}>
-                    {playersInThisLobby.map(player =>
-                        <Typography style={{display: 'flex', alignItems: 'center'}} key={player.uuid}>
+                    {playersInThisLobby.map((player, index) =>
+                        <Typography style={{display: 'flex', alignItems: 'center'}} key={index}>
                             <span style={playerNameColor(player.color)}>{player.name}</span>
                             <span style={showReadyIcon(player.lobbyReady)}><DoneIcon /></span>
                             <span style={showHostIcon(player.host)}><StarBorderIcon /></span>

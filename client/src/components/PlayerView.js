@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import styled from 'styled-components';
 import kenka from '../images/kenka.png';
@@ -7,31 +6,16 @@ import tahti from '../images/tahti.png';
 import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { setAlert } from '../reducers/alertReducer';
-import { removeAllInGamePlayersFromState } from '../reducers/inGamePlayersReducer';
-import { removePlayerFromLobby, setDefaultPlayerProperties } from '../gameUtils';
+import { turnToTrue } from '../reducers/turnReducer';
 import { gameSocket } from '../SocketsGame';
 
-const PlayerView = ({ setPlayerLeftFromGame, setPlayerLobbyReady, setPlayerInLobby, setPlayerGameReady }) => {
+const PlayerView = () => {
     const dispatch = useDispatch();
     const user = useSelector(state => state.user);
     const inGamePlayers = useSelector(state => state.inGamePlayers);
     const landingSpots = useSelector(state => state.landingSpots);
     const landingTokens = useSelector(state => state.landingTokens);
     const starIsFound = useSelector(state => state.starIsFound);
-
-    const handlePlayerLeave = () => {
-        removePlayerFromLobby(player);
-        setDefaultPlayerProperties(player, 'leaving');
-        gameSocket.emit('removeInGamePlayer', player);
-        dispatch(removeAllInGamePlayersFromState());
-        setPlayerInLobby(false);
-        setPlayerGameReady(false);
-        setPlayerLobbyReady(false);
-        setPlayerLeftFromGame({
-            state: true,
-            player: player
-        });
-    };
 
     // tarkistaa Afrikan tähden löytäjän ja ilmoittaa siitä kunnes pelaaja löytää hevosenkengän
     useEffect(() => {
@@ -56,6 +40,7 @@ const PlayerView = ({ setPlayerLeftFromGame, setPlayerLobbyReady, setPlayerInLob
                 const landingSpot = landingSpots.find(s => s.stepControl === player.stepControl);
                 const landingToken = landingTokens.find(t => t.landingSpotId === landingSpot.id);
                 player.money = player.money + landingToken.moneyValue;
+                dispatch(setAlert('Löysit Gold Coastista jalokiven, sait jalokivestä kaksinkertaisen maksun'));
             }
         }
     };
@@ -79,6 +64,7 @@ const PlayerView = ({ setPlayerLeftFromGame, setPlayerLobbyReady, setPlayerInLob
             break;
         case 'rosvo':
             player.money = 0;
+            dispatch(setAlert('Rosvot veivät kaiken omaisuutesi mukanaan =('));
             break;
         case 'tahti':
             player.hasStar = true;
@@ -136,6 +122,7 @@ const PlayerView = ({ setPlayerLeftFromGame, setPlayerLobbyReady, setPlayerInLob
             if (player.hasStar && starIsFound === false) {
                 gameSocket.emit('starIsFound', player);
             }
+            dispatch(turnToTrue());
         }
     };
 
@@ -159,6 +146,7 @@ const PlayerView = ({ setPlayerLeftFromGame, setPlayerLobbyReady, setPlayerInLob
             }
             player.hasGambled = true;
             gameSocket.emit('inGamePlayerToEdit', player);
+            dispatch(turnToTrue());
         }
     };
 
@@ -181,11 +169,6 @@ const PlayerView = ({ setPlayerLeftFromGame, setPlayerLobbyReady, setPlayerInLob
                     <ImageStyle style={showStarImage(player.hasStar)} src={tahti} alt='tähti' />
                     <ImageStyle style={showShoeImage(player.hasShoe)} src={kenka} alt='hevosenkenkä' />
                 </div>
-                <div>
-                    <Button color='secondary' variant='outlined' onClick={handlePlayerLeave}>
-                        Poistu
-                    </Button>
-                </div>
             </PlayerHeader>
             <div>
                 <p style={{marginBottom: '-0.5rem'}}>Rahat: <b>{player.money}</b></p>
@@ -199,7 +182,7 @@ const PlayerView = ({ setPlayerLeftFromGame, setPlayerLobbyReady, setPlayerInLob
                     disabled={playerOnTopOfLandingSpot()}
                     onClick={watchTreasure}
                 >
-                    <span>Löydä <Icon icon='gem' /> (100)</span>
+                    <span>Käännä <Icon icon='gem' /> (100)</span>
                 </Button>
                 <Button
                     style={{width: '100%'}}
@@ -208,7 +191,7 @@ const PlayerView = ({ setPlayerLeftFromGame, setPlayerLobbyReady, setPlayerInLob
                     disabled={playerOnTopOfLandingSpot()}
                     onClick={gambleTreasure}
                 >
-                    <span>Tutki <Icon icon='gem' /> (50%)</span>
+                    <span>Uhkapelaa <Icon icon='gem' /> (50%)</span>
                 </Button>
             </div>
         </React.Fragment>
@@ -230,12 +213,5 @@ const PlayerName = styled.h2`
 const ImageStyle = styled.img`
     width: 30px;
 `;
-
-PlayerView.propTypes = {
-    setPlayerLeftFromGame: PropTypes.func,
-    setPlayerLobbyReady: PropTypes.func,
-    setPlayerInLobby: PropTypes.func,
-    setPlayerGameReady: PropTypes.func
-};
 
 export default PlayerView;

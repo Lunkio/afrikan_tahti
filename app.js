@@ -7,7 +7,6 @@ const landRoutesRouter = require('./routes/landRoutes');
 const seaRoutesRouter = require('./routes/seaRoutes');
 const landingSpotsRouter = require('./routes/landingSpots');
 const startPointsRouter = require('./routes/startPoints');
-const playersRouter = require('./routes/players');
 const landingTokensRouter = require('./routes/landingTokens');
 const lobbiesRouter = require('./routes/lobbies');
 
@@ -26,7 +25,6 @@ app.use('/landRoutes', landRoutesRouter);
 app.use('/seaRoutes', seaRoutesRouter);
 app.use('/landingSpots', landingSpotsRouter);
 app.use('/startPoints', startPointsRouter);
-app.use('/players', playersRouter);
 app.use('/landingTokens', landingTokensRouter);
 app.use('/lobbies', lobbiesRouter);
 

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button } from '@material-ui/core';
 import landingTokenService from '../../services/landingTokenService';
+import lobbyService from '../../services/lobbyService';
 import { setAlert } from '../../reducers/alertReducer';
 import { gameSocket } from '../../SocketsGame';
 
@@ -13,8 +14,6 @@ const StartingPhase = ({ setPlayerGameReady }) => {
     const lobbies = useSelector(state => state.lobbies);
     const [thisLobby, setThisLobby] = useState(undefined);
     const [playersInThisLobby, setPlayersInThisLobby] = useState([]);
-    // console.log('inGamePlayers', inGamePlayers);
-    // console.log('playersInThisLobby', playersInThisLobby);
 
     const getLandingTokens = async (lobby) => {
         try {
@@ -61,12 +60,31 @@ const StartingPhase = ({ setPlayerGameReady }) => {
             if (allPlayersNotReady === undefined) {
                 if (player.host) {
                     getLandingTokens(thisLobby);
+                    setsLobbyReadyToFalseFromPlayersInThisLobby(thisLobby);
                 }
                 setPlayerGameReady(true);
             }
         }
     // eslint-disable-next-line
     }, [playersInThisLobby]);
+
+    const setsLobbyReadyToFalseFromPlayersInThisLobby = async (lobby) => {
+        try {
+            const thisLobby = await lobbyService.getSingleLobby(lobby);
+            if (thisLobby) {
+                const playersFromLobby = thisLobby.playersInLobby;
+                playersFromLobby.forEach(player => {
+                    player.lobbyReady = false;
+                    player.color = '';
+                });
+                thisLobby.playersInLobby = playersFromLobby;
+                await lobbyService.editLobby(thisLobby);
+            }
+        } catch (e) {
+            console.log('error', e);
+            dispatch(setAlert('Jokin meni pieleen =('));
+        }
+    };
 
     const player = inGamePlayers.find(p => p.uuid === user.uuid);
     if (!player) {

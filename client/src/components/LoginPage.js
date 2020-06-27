@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Container, TextField, Button } from '@material-ui/core';
+import styled from 'styled-components';
+import { Container, TextField, Button, Typography } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import { newUser } from '../reducers/userReducer';
 import { setAlert } from '../reducers/alertReducer';
@@ -13,7 +14,7 @@ const LoginPage = () => {
     const handleNewPlayer = (event) => {
         event.preventDefault();
         if (playername === '') {
-            dispatch(setAlert('Syötä nimi'));
+            dispatch(setAlert('Syötä nimimerkki'));
             return;
         }
         const id = uuid();
@@ -52,31 +53,50 @@ const LoginPage = () => {
             winner: false,
             uuid: id,
         };
+        // eslint-disable-next-line
+        if (process.env.NODE_ENV === 'development') {
+            newPlayer.money = 3000;
+        }
         lobbySocket.emit('addPlayer', newPlayer);
         dispatch(newUser(user));
     };
 
     return (
         <div>
-            <Container maxWidth='md' style={{marginTop: '8rem'}}>
+            <Container maxWidth='md'>
+                <Header>
+                    <Typography variant='h3' className='test-color'>
+                        Tervetuloa pelaamaan Afrikan Tähteä!
+                    </Typography>
+                </Header>
                 <form onSubmit={handleNewPlayer}>
                     <TextField 
                         autoFocus
+                        style={{background: 'rgba(255,255,255, 0.7)'}}
                         variant='outlined'
                         size='medium'
-                        placeholder='Player name'
+                        placeholder='Nimimerkki'
                         type='text'
                         value={playername}
                         onChange={e => setPlayername(e.target.value)}
                     />
                     <hr />
                     <Button variant='contained' color='primary' type='submit'>
-                        Go!
+                        Pelaa!
                     </Button>
                 </form>
             </Container>
         </div>
     );
 };
+
+const Header = styled.div`
+    text-align: center;
+    padding-top: 5rem;
+    margin-bottom: 2rem;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+    color: #5065e0;
+`;
+
 
 export default LoginPage;
