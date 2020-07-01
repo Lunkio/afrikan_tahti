@@ -58,7 +58,7 @@ const Header = styled.h4`
 `;
 
 const PlayerSection = styled.div`
-    border: 1.5px solid grey;
+    border: 1.5px solid #FC9E4F;
     padding: 0.5rem;
 `;
 

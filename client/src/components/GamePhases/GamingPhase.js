@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import styled from 'styled-components';
+import { useStyles } from '../../styles/styles';
 import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { setAlert } from '../../reducers/alertReducer';
@@ -9,6 +10,7 @@ import { turnToFalse } from '../../reducers/turnReducer';
 import { gameSocket } from '../../SocketsGame';
 
 const GamingPhase = () => {
+    const classes = useStyles();
     const dispatch = useDispatch();
     const turn = useSelector(state => state.turn);
     const inGamePlayers = useSelector(state => state.inGamePlayers);
@@ -228,7 +230,7 @@ const GamingPhase = () => {
     return (
         <div>
             <TurnButton>
-                <Button disabled={!player.canPlay} onClick={endTurn} variant='contained' color='secondary' fullWidth >
+                <Button className={classes.yellowButton} disabled={!player.canPlay} onClick={endTurn} variant='contained' color='secondary' fullWidth >
                     {confirmEndTurn
                         ? 'Varmasti?'
                         : 'Lopeta vuoro'
@@ -240,7 +242,7 @@ const GamingPhase = () => {
                 <h3>Timer</h3>
             </GameHeader>
             <DiceContainer>
-                <Button disabled={diceCanBeThrown()} onClick={throwDice} color='primary' variant='contained'>
+                <Button className={classes.lightBlueButton} disabled={diceCanBeThrown()} onClick={throwDice} color='primary' variant='contained'>
                     <span>Heitä <Icon icon='dice' /></span>
                 </Button>
                 <div style={notThrowingDice}>
@@ -252,9 +254,9 @@ const GamingPhase = () => {
             </DiceContainer>
             <ButtonsContainer>
                 <Button
-                    style={{width: '100%'}}
+                    style={{width: '100%', marginBottom: '0.2rem'}}
                     color='secondary'
-                    variant='outlined'
+                    variant='contained'
                     disabled={playerCanBuyFlightTicket()}
                     onClick={flyPlayer}
                 >
@@ -264,9 +266,9 @@ const GamingPhase = () => {
                     }
                 </Button>
                 <Button
-                    style={{width: '100%'}}
+                    style={{width: '100%', marginBottom: '0.2rem'}}
                     color='primary'
-                    variant='outlined'
+                    variant='contained'
                     disabled={playerCanBuyBoatTicket(player.freeBoatTicket)}
                     onClick={() => playerBuyBoatTicket('costs')}
                 >
@@ -278,7 +280,7 @@ const GamingPhase = () => {
                 <Button
                     style={{width: '100%'}}
                     color='primary'
-                    variant='outlined'
+                    variant='contained'
                     disabled={playerCanBuyBoatTicket(player.boatTicket)}
                     onClick={() => playerBuyBoatTicket('free')}
                 >

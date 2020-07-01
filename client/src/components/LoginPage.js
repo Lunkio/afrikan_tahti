@@ -65,7 +65,7 @@ const LoginPage = () => {
         <div>
             <Container maxWidth='md'>
                 <Header>
-                    <Typography variant='h3' className='test-color'>
+                    <Typography variant='h3'>
                         Tervetuloa pelaamaan Afrikan Tähteä!
                     </Typography>
                 </Header>

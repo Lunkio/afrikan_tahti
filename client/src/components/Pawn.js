@@ -7,6 +7,7 @@ import pawnTurq from '../images/pawn_turq.png';
 import pawnRed from '../images/pawn_red.png';
 import pawnWhite from '../images/pawn_white.png';
 import pawnViolet from '../images/pawn_violet.png';
+import pawnBrown from '../images/pawn_brown.png';
 import { gameSocket } from '../SocketsGame';
 
 export const movePawn = (spot, player) => {
@@ -68,8 +69,8 @@ const Pawn = () => {
             return pawnViolet;
         case '#0ed145':
             return pawnGreen;
-        case '#e4e4e4':
-            return pawnWhite;
+        case '#b97a56':
+            return pawnBrown;
         case '#fff200':
             return pawnYellow;
         default: return pawnWhite;

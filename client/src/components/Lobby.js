@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { useStyles } from '../styles/styles';
 import LobbyManager from './LobbyManager';
 import { Button, Container, Typography, Paper } from '@material-ui/core';
 import DoneIcon from '@material-ui/icons/Done';
-import StarBorderIcon from '@material-ui/icons/StarBorder';
+import StarIcon from '@material-ui/icons/Star';
 import lobbyService from '../services/lobbyService';
 import { useSelector, useDispatch } from 'react-redux';
 import { setAlert } from '../reducers/alertReducer';
@@ -13,14 +14,13 @@ import { removePlayerFromLobby, updateLobbyAndPlayer } from '../gameUtils';
 import { lobbySocket } from '../SocketsLobby';
 
 const Lobby = ({ setPlayerInLobby }) => {
+    const classes = useStyles();
     const dispatch = useDispatch();
     const user = useSelector(state => state.user);
     const players = useSelector(state => state.players);
     const lobbies = useSelector(state => state.lobbies);
     const [thisLobby, setThisLobby] = useState(undefined);
     const [playersInThisLobby, setPlayersInThisLobby] = useState([players.find(p => p.uuid === user.uuid)]);
-    // console.log('playersInThisLobby', playersInThisLobby);
-    // console.log('lobby komponentti players', players);
 
     const makePlayerHost = (player) => {
         player.host = true;
@@ -130,13 +130,13 @@ const Lobby = ({ setPlayerInLobby }) => {
 
     const playerNameColor = (color) => {
         if (color === '') {
-            color = 'white';
+            color = '#DEEAF7';
         }
         return {color: color, marginRight: '1rem', marginBottom: '5px', textShadow: '-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black'};
     };
 
     const handlePlayerReady = () => {
-        if (player.color === 'white' || player.color === '') {
+        if (player.color === '#DEEAF7' || player.color === '') {
             dispatch(setAlert('Valitsithan värin?'));
             return;
         }
@@ -173,94 +173,119 @@ const Lobby = ({ setPlayerInLobby }) => {
     };
 
     return (
-        <Container maxWidth='md' style={{marginTop: '5rem'}}>
-            <LobbyHeader>
-                <h1>{thisLobby.name}</h1>
-                <Button color='secondary' variant='outlined' onClick={handleLeaveLobby}>
-                    Poistu huoneesta
-                </Button>
-            </LobbyHeader>
-            
-            <h2>Tervetuloa {user.name}!</h2>
-            <div>
-                <h4>Valitse väri</h4>
-                <ColorPicker>
-                    <ColorNameContainer>
-                        <PlayerColor className={markSelection('#7fffd4')} onClick={() => handleColorPick('#7fffd4')} style={{backgroundColor: '#7fffd4'}} />
-                        <PlayerName>{playerName('#7fffd4')}</PlayerName>
-                    </ColorNameContainer>
-                    <ColorNameContainer>
-                        <PlayerColor className={markSelection('#ec1c24')} onClick={() => handleColorPick('#ec1c24')} style={{backgroundColor: '#ec1c24'}} />
-                        <PlayerName>{playerName('#ec1c24')}</PlayerName>
-                    </ColorNameContainer>
-                    <ColorNameContainer>
-                        <PlayerColor className={markSelection('#f900fd')} onClick={() => handleColorPick('#f900fd')} style={{backgroundColor: '#f900fd'}} />
-                        <PlayerName>{playerName('#f900fd')}</PlayerName>
-                    </ColorNameContainer>
-                    <ColorNameContainer>
-                        <PlayerColor className={markSelection('#0ed145')} onClick={() => handleColorPick('#0ed145')} style={{backgroundColor: '#0ed145'}} />
-                        <PlayerName>{playerName('#0ed145')}</PlayerName>
-                    </ColorNameContainer>
-                    <ColorNameContainer>
-                        <PlayerColor className={markSelection('#e4e4e4')} onClick={() => handleColorPick('#e4e4e4')} style={{backgroundColor: '#e4e4e4'}} />
-                        <PlayerName>{playerName('#e4e4e4')}</PlayerName>
-                    </ColorNameContainer>
-                    <ColorNameContainer>
-                        <PlayerColor className={markSelection('#fff200')} onClick={() => handleColorPick('#fff200')} style={{backgroundColor: '#fff200'}} />
-                        <PlayerName>{playerName('#fff200')}</PlayerName>
-                    </ColorNameContainer>
-                </ColorPicker>
-            </div>
-            <div>
-                <Typography variant='h6'>
-                    Pelaajat
-                </Typography>
-                <Paper style={{padding: '1rem'}} elevation={3}>
-                    {playersInThisLobby.map((player, index) =>
-                        <Typography style={{display: 'flex', alignItems: 'center'}} key={index}>
-                            <span style={playerNameColor(player.color)}>{player.name}</span>
-                            <span style={showReadyIcon(player.lobbyReady)}><DoneIcon /></span>
-                            <span style={showHostIcon(player.host)}><StarBorderIcon /></span>
-                        </Typography>    
-                    )}
-                </Paper>
-            </div>
-            <ReadyButtons>
-                <Button 
-                    variant='outlined'
-                    color='primary'
-                    onClick={handlePlayerReady}
-                >
-                    {player.lobbyReady
-                        ? 'En olekaan valmis'
-                        : 'Valmis'
-                    }
-                </Button>
-                {player.host &&
-                    <Button
+        <Container maxWidth='md' style={{paddingTop: '3rem'}} >
+            <LobbyContainer>
+                <LobbyHeader>
+                    <Typography variant='h4'>
+                        {thisLobby.name}
+                    </Typography>
+                </LobbyHeader>
+                <LobbyDetails>
+                    <TypographyStyle variant='h5'>
+                        Valitse väri
+                    </TypographyStyle>
+                    <Button color='secondary' variant='contained' onClick={handleLeaveLobby}>
+                        Poistu huoneesta
+                    </Button>
+                </LobbyDetails>
+                <div>
+                    <ColorPicker>
+                        <ColorNameContainer>
+                            <PlayerColor className={markSelection('#7fffd4')} onClick={() => handleColorPick('#7fffd4')} style={{backgroundColor: '#7fffd4', border: '2px solid black'}} />
+                            <PlayerName>{playerName('#7fffd4')}</PlayerName>
+                        </ColorNameContainer>
+                        <ColorNameContainer>
+                            <PlayerColor className={markSelection('#ec1c24')} onClick={() => handleColorPick('#ec1c24')} style={{backgroundColor: '#ec1c24', border: '2px solid black'}} />
+                            <PlayerName>{playerName('#ec1c24')}</PlayerName>
+                        </ColorNameContainer>
+                        <ColorNameContainer>
+                            <PlayerColor className={markSelection('#f900fd')} onClick={() => handleColorPick('#f900fd')} style={{backgroundColor: '#f900fd', border: '2px solid black'}} />
+                            <PlayerName>{playerName('#f900fd')}</PlayerName>
+                        </ColorNameContainer>
+                        <ColorNameContainer>
+                            <PlayerColor className={markSelection('#0ed145')} onClick={() => handleColorPick('#0ed145')} style={{backgroundColor: '#0ed145', border: '2px solid black'}} />
+                            <PlayerName>{playerName('#0ed145')}</PlayerName>
+                        </ColorNameContainer>
+                        <ColorNameContainer>
+                            <PlayerColor className={markSelection('#b97a56')} onClick={() => handleColorPick('#b97a56')} style={{backgroundColor: '#b97a56', border: '2px solid black'}} />
+                            <PlayerName>{playerName('#b97a56')}</PlayerName>
+                        </ColorNameContainer>
+                        <ColorNameContainer>
+                            <PlayerColor className={markSelection('#fff200')} onClick={() => handleColorPick('#fff200')} style={{backgroundColor: '#fff200', border: '2px solid black'}} />
+                            <PlayerName>{playerName('#fff200')}</PlayerName>
+                        </ColorNameContainer>
+                    </ColorPicker>
+                </div>
+                <div>
+                    <TypographyStyle variant='h6'>
+                        Pelaajat
+                    </TypographyStyle>
+                    <StyledPaper elevation={3}>
+                        {playersInThisLobby.map((player, index) =>
+                            <Players key={index}>
+                                <PlayerNameLobby style={playerNameColor(player.color)}>{player.name}</PlayerNameLobby>
+                                <IconColor style={showReadyIcon(player.lobbyReady)}><DoneIcon /></IconColor>
+                                <IconColor style={showHostIcon(player.host)}><StarIcon /></IconColor>
+                            </Players>    
+                        )}
+                    </StyledPaper>
+                </div>
+                <ReadyButtons>
+                    <Button 
                         variant='contained'
                         color='primary'
-                        onClick={startGame}
-                        disabled={allPlayersReady()}
+                        onClick={handlePlayerReady}
                     >
-                        Aloita peli
+                        {player.lobbyReady
+                            ? 'En olekaan valmis'
+                            : 'Valmis'
+                        }
                     </Button>
-                }
-            </ReadyButtons>
+                    {player.host &&
+                        <Button
+                            className={classes.yellowButton}
+                            variant='contained'
+                            onClick={startGame}
+                            disabled={allPlayersReady()}
+                        >
+                            Aloita peli
+                        </Button>
+                    }
+                </ReadyButtons>
+            </LobbyContainer>
         </Container>
     );
 };
 
+const LobbyContainer = styled.div`
+    padding: 1rem;
+    background-color: rgba(85,70,64,0.3);
+    border-radius: 1%;
+`;
+
 const LobbyHeader = styled.div`
+    padding-top: 0.1rem;
+    text-align: center;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+    color: #FC9E4F;
+`;
+
+const TypographyStyle = styled(Typography)`
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+    color: #DEEAF7;
+`;
+
+const LobbyDetails = styled.div`
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
 `;
 
 const ColorPicker = styled.div`
     display: flex;
     justify-content: space-between;
-    margin-bottom: 50px;
+    margin-bottom: 2rem;
+    margin-top: 1rem;
     width: 100%;
 `;
 
@@ -280,9 +305,34 @@ const PlayerColor = styled.div`
 `;
 
 const PlayerName = styled.span`
+    color: #DEEAF7;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
     word-wrap: break-word;
     width: 100%;
     text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+`;
+
+const StyledPaper = styled(Paper)`
+    background-color: rgba(63,80,181,0.9) !important;
+    padding: 1rem;
+`;
+
+const PlayerNameLobby = styled.span`
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+`;
+
+const Players = styled(Typography)`
+    display: flex;
+    align-items: center;
+`;
+
+const IconColor = styled.span`
+    color: #DEEAF7;
 `;
 
 const ReadyButtons = styled.div`

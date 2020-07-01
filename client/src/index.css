@@ -3,11 +3,21 @@ body {
   font-family: 'Chelsea Market', cursive;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* background: url('./images/background.jpg') no-repeat center center fixed; */
+
+  background: url('./images/background_blur.jpg') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+/* hides scrollbar in chrome */
+.styled-grid::-webkit-scrollbar {
+  display: none;
 }
 
 .color-selected {
-  border: 4px solid black;
+  border: 4px solid black !important;
 }
 
 .pahvi {

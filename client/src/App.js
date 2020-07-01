@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import backgroundImg from './images/background.jpg';
+//import backgroundImg from './images/background.jpg';
 import { useSelector, useDispatch } from 'react-redux';
 import { initUser } from './reducers/userReducer';
 import { setAlert } from './reducers/alertReducer';
@@ -105,7 +105,6 @@ const App = ({ updater }) => {
 
     return (
         <React.Fragment>
-            <Background />
             {!user && <LoginPage />}
             {user && !playerLobbyReady && !gameOver && !playerInLobby && <LobbyManager setPlayerInLobby={setPlayerInLobby} /> }
             {user && !playerLobbyReady && !gameOver && playerInLobby && <Lobby setPlayerInLobby={setPlayerInLobby} />}
@@ -140,22 +139,45 @@ const App = ({ updater }) => {
             <AlertMessage />
             {!playerLobbyReady && <SocketsLobby /> }
             {playerLobbyReady && <SocketsGame thisLobby={thisLobby} setGameOver={setGameOver} /> }
+            {/* {!playerLobbyReady && <Background /> }
+            {playerLobbyReady && <BackgroundGame /> } */}
         </React.Fragment>
     );
 };
 
-const Background = styled.div`
-    background: url(${backgroundImg}) no-repeat center center fixed;
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    z-index: -100;
-    /* filter: blur(8px);
-    -webkit-filter: blur(8px); */
-`;
+// const Background = styled.div`
+//     background: url(${backgroundImg});
+//     -webkit-background-size: cover;
+//     -moz-background-size: cover;
+//     -o-background-size: cover;
+//     background-position: center;
+//     background-repeat: no-repeat;
+//     background-size: cover;
+//     height: 1280px;
+//     position: absolute;
+//     top: 0;
+//     position: absolute;
+//     width: 100%;
+//     z-index: -100;
+// `;
+
+// const BackgroundGame = styled.div`
+//     background: url(${backgroundImg});
+//     -webkit-background-size: cover;
+//     -moz-background-size: cover;
+//     -o-background-size: cover;
+//     background-position: center;
+//     background-repeat: no-repeat;
+//     background-size: cover;
+//     position: absolute;
+//     height: 1280px;
+//     filter: blur(8px);
+//     -webkit-filter: blur(8px);
+//     position: absolute;
+//     top: 0;
+//     width: 100%;
+//     z-index: -100;
+// `;
 
 const Centered = styled.div`
     margin: 0;
@@ -170,9 +192,12 @@ const PlayArena = styled.div`
 `;
 
 const PlayerSection = styled.div`
-    margin-left: 0.5rem;
-    margin-right: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
     width: 100%;
+    background-color: rgba(85,70,64,0.7);
+    color: #DEEAF7;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 `;
 
 App.propTypes = {

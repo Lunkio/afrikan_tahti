@@ -33,7 +33,7 @@ const BottomPanel = ({ setPlayerLeftFromGame, setPlayerLobbyReady, setPlayerInLo
             <div>
                 <Button
                     color='primary'
-                    variant='outlined'
+                    variant='contained'
                     target='_blank'
                     rel='noreferrer noopener'
                     href='https://kariteam.fi/storage/product_files/5/105385_Afrikan_t_hti_peliohjeet.pdf?name=5/105385_Afrikan_t_hti_peliohjeet.pdf'
@@ -44,7 +44,7 @@ const BottomPanel = ({ setPlayerLeftFromGame, setPlayerLobbyReady, setPlayerInLo
             <div>
                 <Button 
                     color='secondary'
-                    variant='outlined'
+                    variant='contained'
                     onClick={handlePlayerLeave}
                 >
                     Poistu pelistä

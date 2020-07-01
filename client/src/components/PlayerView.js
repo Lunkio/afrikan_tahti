@@ -176,9 +176,9 @@ const PlayerView = () => {
             </div>
             <div>
                 <Button
-                    style={{width: '100%'}}
+                    style={{width: '100%', marginBottom: '0.2rem'}}
                     color='primary'
-                    variant='outlined'
+                    variant='contained'
                     disabled={playerOnTopOfLandingSpot()}
                     onClick={watchTreasure}
                 >
@@ -187,7 +187,7 @@ const PlayerView = () => {
                 <Button
                     style={{width: '100%'}}
                     color='primary'
-                    variant='outlined'
+                    variant='contained'
                     disabled={playerOnTopOfLandingSpot()}
                     onClick={gambleTreasure}
                 >
