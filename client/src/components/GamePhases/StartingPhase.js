@@ -32,9 +32,20 @@ const StartingPhase = ({ setPlayerGameReady }) => {
 
     // hakee oikean lobbyn
     useEffect(() => {
-        setThisLobby(lobbies.find(l => l.uuid === player.lobbyuuid));
+        if (player) {
+            setThisLobby(lobbies.find(l => l.uuid === player.lobbyuuid));
+        }
     // eslint-disable-next-line
     }, []);
+
+    // päivittää pelaajan socketId:n koska SocketsGame -komponentin mounttaus vaihtoi id:n
+    useEffect(() => {
+        if (gameSocket && player) {
+            gameSocket.emit('updatePlayerSocketId', player);
+            console.log('gameSocket, pitäisi näkyä vain kerran', gameSocket);
+        }
+    // eslint-disable-next-line
+    }, [gameSocket]);
 
     useEffect(() => {
         if (thisLobby) {
@@ -105,7 +116,7 @@ const StartingPhase = ({ setPlayerGameReady }) => {
             <h3>
                 {player.startReady
                     ? 'Odota muita pelaajia...'
-                    : 'Valitse aloituspaikka'
+                    : 'Valitse aloituspaikka ja klikkaa "Valmis"'
                 }
             </h3>
             <Button onClick={playerStartReady} color='primary' variant='contained'>

@@ -79,7 +79,7 @@ const GameOver = ({ gameOver, setGameOver, setPlayerInLobby, setPlayerLobbyReady
     const playerWantsToLeave = () => {
         const player = inGamePlayers.find(p => p.uuid === user.uuid);
         if (player) {
-            removePlayerFromLobby(player);
+            removePlayerFromLobby(player, 'lobbySocketIsActivated');
             setDefaultPlayerProperties(player, 'leaving');
             dispatch(removeAllInGamePlayersFromState());
             setGameOver(false);

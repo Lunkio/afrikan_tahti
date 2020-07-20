@@ -5,7 +5,6 @@ import pawnYellow from '../images/pawn_yellow.png';
 import pawnGreen from '../images/pawn_green.png';
 import pawnTurq from '../images/pawn_turq.png';
 import pawnRed from '../images/pawn_red.png';
-import pawnWhite from '../images/pawn_white.png';
 import pawnViolet from '../images/pawn_violet.png';
 import pawnBrown from '../images/pawn_brown.png';
 import { gameSocket } from '../SocketsGame';
@@ -73,7 +72,7 @@ const Pawn = () => {
             return pawnBrown;
         case '#fff200':
             return pawnYellow;
-        default: return pawnWhite;
+        default: return pawnBrown;
         }
     };
 

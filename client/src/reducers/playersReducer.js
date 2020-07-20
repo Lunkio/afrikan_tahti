@@ -41,7 +41,7 @@ export const editPlayerDetails = (player) => {
 
 export const removePlayer = (player) => {
     return async dispatch => {
-        await removePlayerFromLobby(player);
+        await removePlayerFromLobby(player, 'lobbySocketIsActivated');
         dispatch({
             type: 'REMOVE_PLAYER',
             data: player.uuid

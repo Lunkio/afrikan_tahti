@@ -7,27 +7,30 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setAlert } from '../../reducers/alertReducer';
 import { initInGamePlayers } from '../../reducers/inGamePlayersReducer';
 import { turnToFalse } from '../../reducers/turnReducer';
+import { decreaseTimer } from '../../reducers/timerReducer';
 import { gameSocket } from '../../SocketsGame';
 
 const GamingPhase = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
+    const timer = useSelector(state => state.timer);
     const turn = useSelector(state => state.turn);
     const inGamePlayers = useSelector(state => state.inGamePlayers);
     const user = useSelector(state => state.user);
     const landingSpots = useSelector(state => state.landingSpots);
     const startPoints = useSelector(state => state.startPoints);
+    const diceValue = useSelector(state => state.dice);
     const [diceBeenThrown, setDiceBeenThrown] = useState(false);
     const [throwingDice, setThrowingDice] = useState(false);
-    const [diceValue, setDiceValue] = useState(1);
     const [confirmEndTurn, setConfirmEndTurn] = useState(false);
     const [stepsRemainInCaseBoatTicketCancel, setStepsRemainInCaseBoatTicketCancel] = useState(0);
     const [amountOfPlayers, setAmountOfPlayers] = useState(inGamePlayers.length);
     const [currentPlayerTurnOrder, setCurrentPlayerTurnOrder] = useState(0);
 
-    // asettaa pelaajille (player.turn) arvoksi 0,1,2 jne... Vain kerran
+    // asettaa pelaajille (player.turnOrder) arvoksi 0,1,2 jne... Vain kerran
     useEffect(() => {
-        const gameTurn = () => {
+        let firstPlayer = null;
+        const gameTurnSetter = () => {
             let turnNumber = 0;
             let turnAmount = 0;
             while (turnAmount < inGamePlayers.length) {
@@ -36,15 +39,20 @@ const GamingPhase = () => {
                         inGamePlayers[i].turnOrder = turnAmount;
                         if (inGamePlayers[i].turnOrder === 0) {
                             inGamePlayers[i].canPlay = true;
+                            firstPlayer = inGamePlayers[i];
                         }
-                        gameSocket.emit('inGamePlayerToEdit', inGamePlayers[i]);
+                        //gameSocket.emit('inGamePlayerToEdit', inGamePlayers[i]);
                         turnAmount++;
                     }
                 }
                 turnNumber++;
             }
         };
-        gameTurn();
+        gameTurnSetter();
+        gameSocket.emit('inGamePlayersTurnEdit', inGamePlayers);
+        if (player.uuid === firstPlayer.uuid) {
+            gameSocket.emit('setCounter', firstPlayer);
+        }
     // eslint-disable-next-line
     }, []);
 
@@ -53,15 +61,22 @@ const GamingPhase = () => {
         const amountOfPlayersCurrently = inGamePlayers.length;
         if (amountOfPlayersCurrently !== amountOfPlayers) {
             const sortedPlayers = inGamePlayers.sort((a,b) => a.turnOrder - b.turnOrder);
-            for (let i = 0; i < sortedPlayers.length; i++) {
-                sortedPlayers[i].turnOrder = i;
+            if (sortedPlayers.length > 0) {
+                for (let i = 0; i < sortedPlayers.length; i++) {
+                    sortedPlayers[i].turnOrder = i;
+                }
+                const thereIsPlayerWhoCanPlay = sortedPlayers.find(p => p.canPlay === true);
+                if (!thereIsPlayerWhoCanPlay) {
+                    const playerToHaveTurn = sortedPlayers[currentPlayerTurnOrder];
+                    if (!playerToHaveTurn) {
+                        sortedPlayers[0].canPlay = true;
+                    } else {
+                        playerToHaveTurn.canPlay = true;
+                    }
+                }
+                dispatch(initInGamePlayers(sortedPlayers));
+                setAmountOfPlayers(amountOfPlayersCurrently);
             }
-            const thereIsPlayerWhoCanPlay = sortedPlayers.find(p => p.canPlay === true);
-            if (!thereIsPlayerWhoCanPlay) {
-                sortedPlayers[currentPlayerTurnOrder].canPlay = true;
-            }
-            dispatch(initInGamePlayers(sortedPlayers));
-            setAmountOfPlayers(amountOfPlayersCurrently);
         }
     // eslint-disable-next-line
     }, [inGamePlayers]);
@@ -74,6 +89,23 @@ const GamingPhase = () => {
         }
     // eslint-disable-next-line
     }, [turn]);
+
+    // Timer
+    useEffect(() => {
+        if (timer.player !== null) {
+            if (timer.counter > -1) {
+                dispatch(decreaseTimer(timer.counter -1, timer.player));
+            }
+            if (player.canPlay) {
+                if (timer.counter === -1) {
+                    if (timer.player.uuid === player.uuid) {
+                        changeTurn();
+                    }
+                }
+            }
+        }
+    // eslint-disable-next-line
+    }, [timer]);
 
     const player = inGamePlayers.find(p => p.uuid === user.uuid);
     if (!player) {
@@ -104,6 +136,7 @@ const GamingPhase = () => {
         gameSocket.emit('inGamePlayerToEdit', nextPlayer);
         setCurrentPlayerTurnOrder(nextPlayer.turnOrder);
         setDiceBeenThrown(false);
+        gameSocket.emit('setCounter', nextPlayer);
     };
 
     const endTurn = () => {
@@ -118,6 +151,7 @@ const GamingPhase = () => {
         if (!player) {
             return;
         }
+
         return player.name;
     };
 
@@ -133,7 +167,6 @@ const GamingPhase = () => {
         const player = inGamePlayers.find(p => p.canPlay === true);
         if (player) {
             let randomNumber = Math.round(Math.random() * (6 - 1) + 1);
-            setDiceValue(randomNumber);
             setDiceBeenThrown(true);
             setThrowingDice(true);
             setTimeout(() => {
@@ -141,6 +174,7 @@ const GamingPhase = () => {
             }, 500);
             player.stepsRemain = randomNumber;
             gameSocket.emit('inGamePlayerToEdit', player);
+            gameSocket.emit('diceThrow', player, randomNumber);
         }
     };
     const notThrowingDice = { display: throwingDice ? 'none' : '', marginLeft: '1rem' };
@@ -239,7 +273,7 @@ const GamingPhase = () => {
             </TurnButton>
             <GameHeader>
                 <p>Vuorossa: <b>{getPlayerWhoHasTurn()}</b></p>
-                <h3>Timer</h3>
+                <h3>{timer.counter}</h3>
             </GameHeader>
             <DiceContainer>
                 <Button className={classes.lightBlueButton} disabled={diceCanBeThrown()} onClick={throwDice} color='primary' variant='contained'>

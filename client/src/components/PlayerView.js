@@ -46,20 +46,22 @@ const PlayerView = () => {
     };
 
     const checkLandingTokenType = (landingToken, player) => {
-        const playerHasStar = inGamePlayers.find(p => p.hasStar === true);
         switch (landingToken.type) {
         case 'tyhja':
             break;
         case 'keltainen':
             player.money = player.money +300;
+            dispatch(setAlert('Löysit Topaasin! +300 rahaa'));
             checkIfGoldCoastIsJewel(player);
             break;
         case 'vihrea':
             player.money = player.money +600;
+            dispatch(setAlert('Löysit Smaragdin! +600 rahaa'));
             checkIfGoldCoastIsJewel(player);
             break;
         case 'punainen':
             player.money = player.money +1000;
+            dispatch(setAlert('Löysit Rubiinin! +1000 rahaa'));
             checkIfGoldCoastIsJewel(player);
             break;
         case 'rosvo':
@@ -71,7 +73,8 @@ const PlayerView = () => {
             dispatch(setAlert('Löysit Afrikan tähden! Vie se takaisin Kairoon tai Tangeriin'));
             break;
         case 'kenka':
-            if (playerHasStar) {
+            if (inGamePlayers.find(p => p.hasStar === true)) {
+                const playerHasStar = inGamePlayers.find(p => p.hasStar === true);
                 if (user.uuid !== playerHasStar.uuid) {
                     player.hasShoe = true;
                     dispatch(setAlert(
@@ -151,11 +154,11 @@ const PlayerView = () => {
     };
 
     const showStarImage = (hasStar) => {
-        return {display: hasStar ? '' : 'none'};
+        return { display: hasStar ? '' : 'none' };
     };
 
     const showShoeImage = (hasShoe) => {
-        return {display: hasShoe ? '' : 'none'};
+        return { display: hasShoe ? '' : 'none' };
     };
 
     return (

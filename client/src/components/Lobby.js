@@ -42,7 +42,7 @@ const Lobby = ({ setPlayerInLobby }) => {
 
     // lisää players stateen uuden liittyneen pelaajan, joka on liittynyt lobbyyn playeria(eli tämä, current) myöhemmin ja tekee lobbyCreatorista hostin
     useEffect(() => {
-        if (thisLobby) {
+        if (thisLobby && player) {
             const allPlayersInThisLobby = [player];
             const playersFromThisLobby = thisLobby.playersInLobby.filter(p => p.lobbyuuid === thisLobby.uuid);
             playersFromThisLobby.forEach((lobbyPlayer) => {
@@ -100,7 +100,7 @@ const Lobby = ({ setPlayerInLobby }) => {
         player.host = false;
         player.lobbyCreator = false;
         lobbySocket.emit('playerToEdit', player);
-        removePlayerFromLobby(player);
+        removePlayerFromLobby(player, 'lobbySocketIsActivated');
         setPlayerInLobby(false);
     };
 

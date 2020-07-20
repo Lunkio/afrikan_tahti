@@ -12,6 +12,8 @@ import starIsFoundReducer from './reducers/starIsFoundReducer';
 import lobbyReducer from './reducers/lobbyReducer';
 import inGamePlayersReducer from './reducers/inGamePlayersReducer';
 import turnReducer from './reducers/turnReducer';
+import timerReducer from './reducers/timerReducer';
+import diceReducer from './reducers/diceReducer';
 
 const reducers = combineReducers({
     user: userReducer,
@@ -25,7 +27,9 @@ const reducers = combineReducers({
     seaRoutes: seaRouteReducer,
     starIsFound: starIsFoundReducer,
     lobbies: lobbyReducer,
-    turn: turnReducer
+    turn: turnReducer,
+    timer: timerReducer,
+    dice: diceReducer
 });
 
 export const store = createStore(reducers, applyMiddleware(thunk));

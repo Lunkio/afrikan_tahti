@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-//import backgroundImg from './images/background.jpg';
 import { useSelector, useDispatch } from 'react-redux';
 import { initUser } from './reducers/userReducer';
 import { setAlert } from './reducers/alertReducer';
@@ -59,10 +58,6 @@ const App = ({ updater }) => {
             }
         };
         fetch();
-
-        // return () => {
-
-        // };
     // eslint-disable-next-line
     }, [updater]);
 
@@ -71,9 +66,9 @@ const App = ({ updater }) => {
         if (!playerLobbyReady) {
             if (playerLeftFromGame.state) {
                 if (playerLeftFromGame.player !== null) {
-                    dispatch(initLobbies());
+                    lobbySocket.emit('initLobbies');
+                    lobbySocket.emit('playerReturnedFromGame', playerLeftFromGame.player);
                     setPlayerLeftFromGame({ state: false, player: null });
-                    lobbySocket.emit('addPlayer', playerLeftFromGame.player);
                 }
             }
         }
@@ -93,8 +88,7 @@ const App = ({ updater }) => {
                             dispatch(removeAllPlayersFromState());
                             dispatch(initInGamePlayers(lobby.playersInLobby));
                             dispatch(initLandingSpots(lobby));
-                            // alla oleva unmountaa SocketsLobby -komponentin
-                            setPlayerLobbyReady(true);
+                            setPlayerLobbyReady(true); // unmountaa SocketsLobby -komponentin ja mountaa SocketsGame -komponentin
                         }
                     }
                 }
@@ -139,45 +133,9 @@ const App = ({ updater }) => {
             <AlertMessage />
             {!playerLobbyReady && <SocketsLobby /> }
             {playerLobbyReady && <SocketsGame thisLobby={thisLobby} setGameOver={setGameOver} /> }
-            {/* {!playerLobbyReady && <Background /> }
-            {playerLobbyReady && <BackgroundGame /> } */}
         </React.Fragment>
     );
 };
-
-// const Background = styled.div`
-//     background: url(${backgroundImg});
-//     -webkit-background-size: cover;
-//     -moz-background-size: cover;
-//     -o-background-size: cover;
-//     background-position: center;
-//     background-repeat: no-repeat;
-//     background-size: cover;
-//     height: 1280px;
-//     position: absolute;
-//     top: 0;
-//     position: absolute;
-//     width: 100%;
-//     z-index: -100;
-// `;
-
-// const BackgroundGame = styled.div`
-//     background: url(${backgroundImg});
-//     -webkit-background-size: cover;
-//     -moz-background-size: cover;
-//     -o-background-size: cover;
-//     background-position: center;
-//     background-repeat: no-repeat;
-//     background-size: cover;
-//     position: absolute;
-//     height: 1280px;
-//     filter: blur(8px);
-//     -webkit-filter: blur(8px);
-//     position: absolute;
-//     top: 0;
-//     width: 100%;
-//     z-index: -100;
-// `;
 
 const Centered = styled.div`
     margin: 0;

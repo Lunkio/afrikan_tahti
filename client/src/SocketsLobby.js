@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import io from 'socket.io-client';
 import { useDispatch } from 'react-redux';
-import { addNewLobby, editLobbyDetails, removeLobby } from './reducers/lobbyReducer';
+import { addNewLobby, editLobbyDetails, removeLobby, initLobbies } from './reducers/lobbyReducer';
 import { newPlayer, editPlayerDetails, removePlayer } from './reducers/playersReducer';
 
 export let lobbySocket;
@@ -17,6 +17,10 @@ const SocketsLobby = () => {
             lobbySocket = io('https://afrikan-tahti.herokuapp.com/');
         }
 
+        lobbySocket.on('lobbiesInited', () => {
+            dispatch(initLobbies());
+        });
+
         lobbySocket.on('lobbyAdded', (lobby) => {
             dispatch(addNewLobby(lobby));
         });
@@ -27,7 +31,11 @@ const SocketsLobby = () => {
 
         lobbySocket.on('editedLobby', (lobby) => {
             //console.log('SOCKET, editedLobby', lobby);
-            dispatch(editLobbyDetails(lobby));
+            if (lobby === '') {
+                dispatch(initLobbies());
+            } else {
+                dispatch(editLobbyDetails(lobby));
+            }
         });
 
         lobbySocket.on('playerAdded', (player) => {
@@ -36,6 +44,7 @@ const SocketsLobby = () => {
         });
 
         lobbySocket.on('playerRemoved', (player) => {
+            //console.log('lobbySocket playerRemoved', player);
             dispatch(removePlayer(player));
         });
 

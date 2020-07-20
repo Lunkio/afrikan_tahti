@@ -5,7 +5,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { revealLandingSpot } from './reducers/landingSpotReducer';
 import { foundStar } from './reducers/starIsFoundReducer';
 import { initLandingTokens } from './reducers/landingTokenReducer';
-import { editInGamePlayer, removeInGamePlayer } from './reducers/inGamePlayersReducer';
+import { editInGamePlayer, editInGamePlayersAll, removeInGamePlayer, removeInGamePlayerAndFromLobby } from './reducers/inGamePlayersReducer';
+import { setTimer } from './reducers/timerReducer';
+import { throwDice } from './reducers/diceReducer';
 
 export let gameSocket;
 
@@ -37,6 +39,13 @@ const SocketsGame = ({ thisLobby, setGameOver }) => {
             }
         });
 
+        gameSocket.on('thrownDice', (player, amount) => {
+            if (inGamePlayers.find(p => p.uuid === player.uuid)) {
+                //console.log('SOCKET, nopan heitto tulee tänne');
+                dispatch(throwDice(amount));
+            }
+        });
+
         gameSocket.on('inGameEditedPlayer', (player) => {
             if (inGamePlayers.find(p => p.uuid === player.uuid)) {
                 //console.log('SOCKET, pelaajan muokkaus tulee tänne');
@@ -47,6 +56,13 @@ const SocketsGame = ({ thisLobby, setGameOver }) => {
             }
         });
 
+        gameSocket.on('inGamePlayersEditedTurn', (players) => {
+            if (inGamePlayers.find(p => p.uuid === players[0].uuid)) {
+                //console.log('SOCKET, pelaajan lähtö tulee tänne');
+                dispatch(editInGamePlayersAll(players));
+            }
+        });
+
         gameSocket.on('inGamePlayerRemoved', (player) => {
             if (inGamePlayers.find(p => p.uuid === player.uuid)) {
                 //console.log('SOCKET, pelaajan lähtö tulee tänne');
@@ -54,10 +70,25 @@ const SocketsGame = ({ thisLobby, setGameOver }) => {
             }
         });
 
+        gameSocket.on('inGamePlayerRemovedAndFromLobby', (player) => {
+            //console.log('gameSocket inGamePlayerRemovedAndFromLobby', player);
+            if (inGamePlayers.find(p => p.uuid === player.uuid)) {
+                //console.log('SOCKET, pelaajan lähtö tulee tänne');
+                dispatch(removeInGamePlayerAndFromLobby(player));
+            }
+        });
+
         gameSocket.on('starFound', (player) => {
             if (inGamePlayers.find(p => p.uuid === player.uuid)) {
                 //console.log('SOCKET, tähden löytö tulee tänne');
                 dispatch(foundStar());
+            }
+        });
+
+        gameSocket.on('counterSet', (player) => {
+            if (inGamePlayers.find(p => p.uuid === player.uuid)) {
+                //console.log('SOCKET, vuoron vaihto tulee tänne');
+                dispatch(setTimer(player));
             }
         });
 

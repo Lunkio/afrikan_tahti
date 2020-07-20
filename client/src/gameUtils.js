@@ -1,5 +1,6 @@
 import lobbyService from './services/lobbyService';
 import { lobbySocket } from './SocketsLobby';
+import { gameSocket } from './SocketsGame';
 
 export const updateLobbyAndPlayer = async (player, thisLobby, status) => {
     try {
@@ -18,7 +19,7 @@ export const updateLobbyAndPlayer = async (player, thisLobby, status) => {
     }
 };
 
-export const removePlayerFromLobby = async (player) => {
+export const removePlayerFromLobby = async (player, status) => {
     try {
         const lobbies = await lobbyService.getAllLobbies();
         const lobbyToRemovePlayer = lobbies.find(lobby => lobby.playersInLobby.find(p => p.uuid === player.uuid));
@@ -26,7 +27,12 @@ export const removePlayerFromLobby = async (player) => {
             const playerRemoved = lobbyToRemovePlayer.playersInLobby.filter(p => p.uuid !== player.uuid);
             lobbyToRemovePlayer.playersInLobby = playerRemoved;
             const updatedLobby = await lobbyService.editLobby(lobbyToRemovePlayer);
-            lobbySocket.emit('lobbyToEdit', updatedLobby);
+            if (status === 'lobbySocketIsActivated') {
+                lobbySocket.emit('lobbyToEdit', updatedLobby);
+            }
+            if (status === 'gameSocketIsActivated') {
+                gameSocket.emit('removeInGamePlayer', player);
+            }
         }
     } catch (e) {
         console.log('error', e);

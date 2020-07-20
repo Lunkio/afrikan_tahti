@@ -5,17 +5,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@material-ui/core';
 import { removeAllInGamePlayersFromState } from '../reducers/inGamePlayersReducer';
 import { removePlayerFromLobby, setDefaultPlayerProperties } from '../gameUtils';
-import { gameSocket } from '../SocketsGame';
 
 const BottomPanel = ({ setPlayerLeftFromGame, setPlayerLobbyReady, setPlayerInLobby, setPlayerGameReady }) => {
     const dispatch = useDispatch();
     const inGamePlayers = useSelector(state => state.inGamePlayers);
     const user = useSelector(state => state.user);
 
-    const handlePlayerLeave = () => {
-        removePlayerFromLobby(player);
+    const handlePlayerLeave = async () => {
+        await removePlayerFromLobby(player, 'gameSocketIsActivated');
         setDefaultPlayerProperties(player, 'leaving');
-        gameSocket.emit('removeInGamePlayer', player);
         dispatch(removeAllInGamePlayersFromState());
         setPlayerInLobby(false);
         setPlayerGameReady(false);
